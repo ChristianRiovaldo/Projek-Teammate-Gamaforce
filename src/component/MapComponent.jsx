@@ -9,7 +9,7 @@ const MapComponent = () => {
     useEffect(() => {
         if (mapRef.current && !mapInstance.current) {
             mapInstance.current = L.map(mapRef.current).setView(
-                [-7.773179090390894, 110.37823736303379], 13
+                [-7.773179090390894, 110.37823736303379], 15
             );
 
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -31,14 +31,6 @@ const MapComponent = () => {
                 iconAnchor: [22, 94],
                 popupAnchor: [-3, -76],
             });
-
-            // GMRT
-            const GMRT =  L.marker([-7.773901946863017, 110.37866022837716], {icon : customIcon}).addTo(
-                mapInstance.current
-            );
-
-            // Add marker GMRT
-            GMRT.bindPopup("This is GMRT").openPopup();
 
         }
     }, []);
