@@ -35,7 +35,9 @@ const MapComponent = () => {
         }
     }, []);
     return (
-        <div ref={mapRef} className="w-screen h-screen">MapComponent</div>
+        <div ref={mapRef} className="w-screen h-screen mt-16" style={{ width: "100%", height: "calc(100vh - 4rem)" }}>
+            MapComponent
+        </div>
     );
 }
 
