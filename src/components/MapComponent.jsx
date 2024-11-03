@@ -22,7 +22,7 @@ const MapComponent = () => {
       const marker = L.marker([-7.773648529865574, 110.37838175455724]).addTo(mapInstance.current);
 
       //add pop up Gamaforce
-      marker.bindPopup("This is Gamaforce").openPopup();
+      marker.bindPopup("Bengkel Gamaforce").openPopup();
 
       //custom icon
       const customIcon = L.icon({
@@ -32,11 +32,11 @@ const MapComponent = () => {
         popupAnchor: [-3, -76],
       });
       
-      // GMRT
-      L.marker([-7.774554892963059, 110.37880465952519], { icon: customIcon })
-        .addTo(mapInstance.current)
-        .bindPopup("This is GMRT!")
-        .openPopup();
+      //GMRT
+    //   L.marker([-7.774554892963059, 110.37880465952519], { icon: customIcon })
+    //     .addTo(mapInstance.current)
+    //     .bindPopup("This is GMRT!")
+    //     .openPopup();
     }
   }, []);
   return <div ref={mapRef} className="w.screen h-[550px]">MapComponent</div>;
