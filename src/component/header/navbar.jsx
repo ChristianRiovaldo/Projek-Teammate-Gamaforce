@@ -1,9 +1,11 @@
 import React from "react";
 
+
+// Membuat navigation bar
 const Header = () => {
     return (
-        <nav className="bg-white shadow-xl text-blue-950 w-full h-16 fixed left-0 top-0 z-0">
-            <div className="flex flex-row justify-between items-center border-2 border-blue-950 shadow-xl p-4">
+        <nav className="bg-white border-2 border-blue-950 text-blue-950 w-full h-16 fixed left-0 top-0 z-50">
+            <div className="flex flex-row justify-between items-center shadow-xl p-4">
                 <div className="ml-20">
                     <p>UNTUK LOGO</p>
                 </div>
