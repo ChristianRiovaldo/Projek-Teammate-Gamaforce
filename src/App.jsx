@@ -5,8 +5,8 @@ import Header from "./components/header/navbar";
 function App() {
   return (
     <>
-      <Header />
       <MapComponent />
+      <Header />
     </>
   )
 }
