@@ -1,6 +1,9 @@
 import L from 'leaflet';
 import { useEffect, useRef } from 'react';
+import '@bopen/leaflet-area-selection/dist/index.css';
+import { DrawAreaSelection } from '@bopen/leaflet-area-selection';
 import "leaflet/dist/leaflet.css";
+
 
 const MapComponent = () => {
     const mapRef = useRef(null);
