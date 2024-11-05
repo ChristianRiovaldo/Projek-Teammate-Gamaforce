@@ -58,21 +58,23 @@ const MapComponent = () => {
             {/* Container untuk peta */}
             <div ref={mapRef} className="w-screen h-screen mt-16 z-0" style={{ width: "100%", height: "calc(100vh - 4rem)" }} />
 
-            <div className=''>
-                <div className=''>
-                    {/* Tombol Kustom untuk Memulai Mode Gambar */}
-                    <button onClick={handleDrawPolygon} style={{ position: 'absolute', top: '1rem', left: '1rem', padding: '8px 16px', zIndex: 1000, backgroundColor: 'blue', color: 'white', border: 'none', borderRadius: '4px' }}>
-                        Draw Polygon
-                    </button>
-                </div>
+            <div className='absolute left-0 top-0 flex items-start p-4 z-20'>
+                <div className="flex flex-col items-start gap-4 p-4 z-50">
+                    <div>
+                        {/* Tombol Kustom untuk Memulai Mode Gambar */}
+                        <button onClick={handleDrawPolygon} className="border-2 border-blue-950 px-4 py-2 bg-blue-500 text-white rounded-md border-">
+                            Draw Polygon
+                        </button>
+                    </div>
 
-                {/* Menampilkan Titik Poligon */}
-                <div className='' style={{ position: 'absolute', top: '3rem', left: '1rem', backgroundColor: 'white', padding: '8px', borderRadius: '4px', maxHeight: '150px', overflowY: 'auto' }}>
-                    <h3>Selected Points:</h3>
-                    <pre>{JSON.stringify(polygonPoints, null, 2)}</pre>
+                    {/* Jika ingin Menampilkan Titik Poligon */}
+                    {/* <div className="border-2 border-blue-950 bg-white p-4 rounded-md max-h-36 overflow-y-auto max-w-34">
+                        <h3>Selected Points:</h3>
+                        <pre>{JSON.stringify(polygonPoints, null, 2)}</pre>
+                    </div> */}
                 </div>
             </div>
-            
+
         </div>
     );
 };
