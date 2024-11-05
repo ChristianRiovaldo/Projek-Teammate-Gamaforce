@@ -1,12 +1,10 @@
 import React from "react";
 
+
 // Membuat navigation bar
 const Header = () => {
     return (
-        <nav className="bg-white border-2 border-blue-950 text-blue-950 shadow-xl flex flex-row items-center w-full h-16 fixed left-0 top-0 z-50 p-4">
-            <div className="flex flex-col items-start bg-blue-950 text-white w-16 h-screen fixed top-0 left-0 p-4">
-            </div>
-            
+        <nav className="bg-white border-2 border-blue-950 text-blue-950 shadow-xl flex flex-row items-center w-full h-16 fixed left-0 top-0 z-10 p-4">
             <div className="flex flex-row justify-between items-center w-full">
                 <div className="flex justify-center items-center ml-20">
                     <img src="./src/assets/Gamaforce.jpeg" alt="Logo Gamaforce" className="w-full h-12 p-0" />

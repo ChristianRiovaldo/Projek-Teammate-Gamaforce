@@ -1,6 +1,6 @@
-import "./App.css"
-import MapComponent from "./components/MapComponent";
-import Header from "./components/header/navbar";
+import './App.css'
+import MapComponent from './component/MapComponent';
+import Header from './component/header/navbar';
 
 function App() {
   return (
