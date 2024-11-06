@@ -1,4 +1,5 @@
 import L from 'leaflet';
+import { Hexagon, Circle, PencilLine } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
@@ -25,6 +26,16 @@ const MapComponent = () => {
             // Marker with popup
             const marker = L.marker([-7.773179090390894, 110.37823736303379]).addTo(mapInstance.current);
             marker.bindPopup("This is GAMAFORCE!").openPopup();
+
+            // Event listener untuk menambahkan layer ketika bentuk dibuat
+            mapInstance.current.on(L.Draw.Event.CREATED, (event) => {
+                const layer = event.layer;
+                const points = layer.getLatLngs()[0].map((point) => [point.lat, point.lng]);
+                setPolygonPoints(points);
+
+                // Tambahkan layer ke peta
+                layer.addTo(mapInstance.current);
+            });
         }
     }, []);
 
@@ -40,30 +51,57 @@ const MapComponent = () => {
                 }
             });
             drawPolygon.enable();
-
-            // Event listener untuk menangani poligon yang selesai digambar
-            mapInstance.current.on(L.Draw.Event.CREATED, (event) => {
-                const layer = event.layer;
-                const points = layer.getLatLngs()[0].map((point) => [point.lat, point.lng]);
-                setPolygonPoints(points);
-
-                // Tambahkan poligon ke peta
-                layer.addTo(mapInstance.current);
-            });
         }
     };
+
+    // Fungsi untuk menggambar garis
+    const handleDrawLine = () => {
+        const drawLine = new L.Draw.Polyline(mapInstance.current, {
+            shapeOptions: {
+                color: 'green',
+                weight: 2,
+            }
+        });
+        drawLine.enable();
+    };
+
+    // Fungsi untuk menggambar lingkaran
+    const handleDrawCircle = () => {
+        const drawCircle = new L.Draw.Circle(mapInstance.current, {
+            shapeOptions: {
+                color: 'red',
+                weight: 2,
+                fillColor: '#ff6666',
+                fillOpacity: 0.4,
+            }
+        });
+        drawCircle.enable();
+    };
+
 
     return (
         <div className='relative'>
             {/* Container untuk peta */}
             <div ref={mapRef} className="w-screen h-screen mt-16 z-0" style={{ width: "100%", height: "calc(100vh - 4rem)" }} />
 
-            <div className='absolute left-0 top-0 flex items-start p-4 z-20'>
-                <div className="flex flex-col items-start gap-4 p-4 z-50">
+            <div className='absolute left-0 top-1/4 flex items-start py-4 z-20'>
+                <div className="flex flex-col items-start gap-2 py-4 px-2 z-50">
                     <div>
                         {/* Tombol Kustom untuk Memulai Mode Gambar */}
-                        <button onClick={handleDrawPolygon} className="border-2 border-blue-950 px-4 py-2 bg-blue-500 text-white rounded-md border-">
-                            Draw Polygon
+                        <button onClick={handleDrawPolygon} className="border-2 border-white px-2 py-2 bg-blue-950 text-white rounded-xl">
+                            <Hexagon />
+                        </button>
+                    </div>
+                    <div>
+                        {/* Tombol Kustom untuk Memulai Mode Gambar */}
+                        <button onClick={handleDrawLine} className="border-2 border-white px-2 py-2 bg-blue-950 text-white rounded-xl">
+                            <PencilLine />
+                        </button>
+                    </div>
+                    <div>
+                        {/* Tombol Kustom untuk Memulai Mode Gambar */}
+                        <button onClick={handleDrawCircle} className="border-2 border-white px-2 py-2 bg-blue-950 text-white rounded-xl">
+                            <Circle />
                         </button>
                     </div>
 
@@ -74,7 +112,6 @@ const MapComponent = () => {
                     </div> */}
                 </div>
             </div>
-
         </div>
     );
 };
