@@ -8,8 +8,9 @@ import 'leaflet-draw';
 const MapComponent = () => {
     const mapRef = useRef(null);
     const mapInstance = useRef(null);
-    const drawControlRef = useRef(null);
     const [polygonPoints, setPolygonPoints] = useState([]);
+    const [polylinePoints, setPolylinePoints] = useState([]);
+    const [circleData, setCircleData] = useState(null);
 
     useEffect(() => {
         if (mapRef.current && !mapInstance.current) {
@@ -27,11 +28,21 @@ const MapComponent = () => {
             const marker = L.marker([-7.773179090390894, 110.37823736303379]).addTo(mapInstance.current);
             marker.bindPopup("This is GAMAFORCE!").openPopup();
 
-            // Event listener untuk menambahkan layer ketika bentuk dibuat
+            // Event listener untuk menangkap bentuk yang dibuat
             mapInstance.current.on(L.Draw.Event.CREATED, (event) => {
                 const layer = event.layer;
-                const points = layer.getLatLngs()[0].map((point) => [point.lat, point.lng]);
-                setPolygonPoints(points);
+                
+                if (event.layerType === 'polygon') {
+                    const points = layer.getLatLngs()[0].map((point) => [point.lat, point.lng]);
+                    setPolygonPoints(points);
+                } else if (event.layerType === 'polyline') {
+                    const points = layer.getLatLngs().map((point) => [point.lat, point.lng]);
+                    setPolylinePoints(points);
+                } else if (event.layerType === 'circle') {
+                    const center = layer.getLatLng();
+                    const radius = layer.getRadius();
+                    setCircleData({ center: [center.lat, center.lng], radius });
+                }
 
                 // Tambahkan layer ke peta
                 layer.addTo(mapInstance.current);
@@ -58,7 +69,7 @@ const MapComponent = () => {
     const handleDrawLine = () => {
         const drawLine = new L.Draw.Polyline(mapInstance.current, {
             shapeOptions: {
-                color: 'green',
+                color: 'black',
                 weight: 2,
             }
         });
@@ -80,12 +91,12 @@ const MapComponent = () => {
 
 
     return (
-        <div className='relative'>
+        <div className='relative flex items-center'>
             {/* Container untuk peta */}
             <div ref={mapRef} className="w-screen h-screen mt-16 z-0" style={{ width: "100%", height: "calc(100vh - 4rem)" }} />
 
-            <div className='absolute left-0 top-1/4 flex items-start py-4 z-20'>
-                <div className="flex flex-col items-start gap-2 py-4 px-2 z-50">
+            <div className='absolute left-0 flex items-start py-4 z-20'>
+                <div className="flex flex-col items-start gap-2 py-4 px-2">
                     <div>
                         {/* Tombol Kustom untuk Memulai Mode Gambar */}
                         <button onClick={handleDrawPolygon} className="border-2 border-white px-2 py-2 bg-blue-950 text-white rounded-xl">
@@ -105,10 +116,18 @@ const MapComponent = () => {
                         </button>
                     </div>
 
-                    {/* Jika ingin Menampilkan Titik Poligon */}
+                    {/* Jika ingin Menampilkan atau menyimpan misi */}
                     {/* <div className="border-2 border-blue-950 bg-white p-4 rounded-md max-h-36 overflow-y-auto max-w-34">
-                        <h3>Selected Points:</h3>
+                        <h3>Selected Polygon:</h3>
                         <pre>{JSON.stringify(polygonPoints, null, 2)}</pre>
+                    </div>
+                    <div className="border-2 border-blue-950 bg-white p-4 rounded-md max-h-36 overflow-y-auto max-w-34">
+                        <h3>Selected Polyline:</h3>
+                        <pre>{JSON.stringify(polylinePoints, null, 2)}</pre>
+                    </div>
+                    <div className="border-2 border-blue-950 bg-white p-4 rounded-md max-h-36 overflow-y-auto max-w-34">
+                        <h3>Selected Circle:</h3>
+                        <pre>{JSON.stringify(circleData, null, 2)}</pre>
                     </div> */}
                 </div>
             </div>
