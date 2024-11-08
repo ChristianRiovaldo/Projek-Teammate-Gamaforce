@@ -10,7 +10,7 @@ const Header = () => {
     };
 
     return (
-        <nav className="bg-white border-b-2 border-blue-950 text-blue-950 shadow-md fixed w-full h-16 z-50 p-4 flex items-center">
+        <nav className="bg-white border-b-2 border-blue-950 text-blue-950 shadow-md fixed w-full h-16 z-20 p-4 flex items-center">
             <div className="flex justify-between items-center w-full max-w-7xl mx-auto">
                 
                 {/* Logo */}

@@ -115,7 +115,7 @@ const MapComponent = () => {
             {/* Container untuk peta */}
             <div ref={mapRef} className="w-screen h-screen mt-16 z-0" style={{ width: "100%", height: "calc(100vh - 4rem)" }} />
 
-            <div className='absolute left-0 top-60 lg:top-56 flex items-start z-20'>
+            <div className='absolute left-0 top-60 lg:top-56 flex items-start z-10'>
                 <div className="flex flex-col items-start gap-2 px-2 max-w-96 sm:max-w-md lg:max-w-lg">
                     {/* Tombol Kustom untuk Memulai Mode Gambar */}
                     <button onClick={handleDrawPolygon} className="border-2 border-white px-2 py-2 bg-blue-950 text-white rounded-xl">
