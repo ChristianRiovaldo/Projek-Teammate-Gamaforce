@@ -1,5 +1,5 @@
 {
-  "name": "belajar-vite",
+  "name": "teammate-project",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,8 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "leaflet": "^1.9.4",
+    "leaflet": "^1.7.1",
     "leaflet-draw": "^1.0.4",
+    "leaflet-geometryutil": "^0.10.3",
     "lucide-react": "^0.454.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
