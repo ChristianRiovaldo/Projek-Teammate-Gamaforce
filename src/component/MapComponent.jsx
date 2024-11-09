@@ -1,10 +1,10 @@
 import L from 'leaflet';
 import { Hexagon, Circle, PencilLine, Square } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import MenuComponent from './MenuComponent';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 import 'leaflet-draw';
-import MenuComponent from './MenuComponent';
 
 const MapComponent = () => {
     const mapRef = useRef(null);
@@ -113,13 +113,14 @@ const MapComponent = () => {
 
     return (
         <div className='relative flex items-center'>
-
-            <div className="absolute w-full h-screen bg-transparent">
-                <MenuComponent />
+            {/* Create Mission Button */}
+            <div className='absolute w-full h-screen bg-transparent'>
+                    <MenuComponent/>
             </div>
-
+            
             {/* Container untuk peta */}
             <div ref={mapRef} className="w-screen h-screen mt-16 z-0" style={{ width: "100%", height: "calc(100vh - 4rem)" }} />
+
 
             <div className='absolute left-0 top-60 lg:top-56 flex items-start z-10'>
                 <div className="flex flex-col items-start gap-2 px-2 max-w-96 sm:max-w-md lg:max-w-lg">
