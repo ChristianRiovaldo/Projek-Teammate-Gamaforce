@@ -13,6 +13,7 @@ const MapComponent = () => {
     const [polylinePoints, setPolylinePoints] = useState([]);
     const [rectangleBounds, setRectangleBounds] = useState(null);
     const [circleData, setCircleData] = useState(null);
+    const [mission, setMission] = useState([]);
 
     useEffect(() => {
         if (mapRef.current && !mapInstance.current) {
