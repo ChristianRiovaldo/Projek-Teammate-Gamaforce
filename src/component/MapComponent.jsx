@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import { Hexagon, Circle, PencilLine, MapPin } from 'lucide-react';
+import { Hexagon, Circle, PencilLine, MapPin, Edit, Trash2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import MenuComponent from './MenuComponent';
 import 'leaflet/dist/leaflet.css';
@@ -15,7 +15,9 @@ const MapComponent = () => {
     const [circleData, setCircleData] = useState(null);
     const [markerPosition, setMarkerPosition] = useState({ lat: '', lng: '' });
     const [showPopover, setShowPopover] = useState(false);
-    const [isClickMode, setIsClickMode] = useState(false);
+    const drawnItems = useRef(new L.FeatureGroup());
+    const [isEditing, setIsEditing] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         if (mapRef.current && !mapInstance.current) {
@@ -36,6 +38,7 @@ const MapComponent = () => {
             // Event listener untuk menangkap bentuk yang dibuat
             mapInstance.current.on(L.Draw.Event.CREATED, (event) => {
                 const layer = event.layer;
+                drawnItems.current.addLayer(layer);
 
                 if (event.layerType === 'polygon') {
                     const points = layer.getLatLngs()[0].map((point) => [point.lat, point.lng]);
@@ -64,7 +67,6 @@ const MapComponent = () => {
     // Toggle popover visibility
     const togglePopover = () => {
         setShowPopover((prev) => !prev);
-        setIsClickMode(false); // Reset mode saat popover dibuka/tutup
     };
 
     // Fungsi untuk memulai mode menggambar poligon
@@ -122,6 +124,40 @@ const MapComponent = () => {
         drawCircle.enable();
     };
 
+    // Toggle edit mode
+    const handleEditMode = () => {
+        setIsEditing(!isEditing);
+        setIsDeleting(false);
+        if (isEditing) {
+            mapInstance.current.eachLayer((layer) => {
+                if (drawnItems.current.hasLayer(layer) && layer.editing) {
+                    layer.editing.disable();
+                }
+            });
+        } else {
+            drawnItems.current.eachLayer((layer) => {
+                if (layer.editing) layer.editing.enable();
+            });
+        }
+    };
+
+    // Toggle delete mode
+    const handleDeleteMode = () => {
+        setIsDeleting(!isDeleting);
+        setIsEditing(false);
+        if (isDeleting) {
+            drawnItems.current.eachLayer((layer) => {
+                layer.on('click', () => {
+                    drawnItems.current.removeLayer(layer);
+                });
+            });
+        } else {
+            drawnItems.current.eachLayer((layer) => {
+                layer.off('click'); // Disable delete event listener
+            });
+        }
+    };
+
     return (
         <div className='relative flex items-center'>
             {/* Create Mission Button */}
@@ -133,7 +169,7 @@ const MapComponent = () => {
             <div ref={mapRef} className="w-screen h-screen mt-16 z-0" style={{ width: "100%", height: "calc(100vh - 4rem)" }} />
 
 
-            <div className='absolute left-0 top-60 lg:top-56 flex items-start z-10'>
+            <div className='absolute left-0 top-52 lg:top-48 flex items-start z-10'>
                 <div className="flex flex-col items-start gap-2 px-2 max-w-96 sm:max-w-md lg:max-w-lg">
                     {/* Tombol Kustom untuk Memulai Mode Gambar */}
                     <button onClick={handleDrawPolygon} className="border-2 border-white px-2 py-2 bg-blue-950 text-white rounded-xl">
@@ -177,6 +213,16 @@ const MapComponent = () => {
                     {/* Tombol Kustom untuk Memulai Mode Gambar */}
                     <button onClick={handleDrawCircle} className="border-2 border-white px-2 py-2 bg-blue-950 text-white rounded-xl">
                         <Circle />
+                    </button>
+
+                    {/* Button untuk editing */}
+                    <button onClick={handleEditMode} className={`border-2 px-2 py-2 ${isEditing ? 'bg-green-500' : 'bg-blue-950'} text-white rounded-xl`}>
+                        <Edit />
+                    </button>
+
+                    {/* Button untuk menghapus */}
+                    <button onClick={handleDeleteMode} className={`border-2 px-2 py-2 ${isDeleting ? 'bg-red-500' : 'bg-blue-950'} text-white rounded-xl`}>
+                        <Trash2 />
                     </button>
 
                     {/* Jika ingin Menampilkan atau menyimpan misi */}
