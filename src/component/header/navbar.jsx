@@ -42,7 +42,7 @@ const Header = () => {
                     </button>
                 </div>
 
-                {/* Search bar for mobile with animation */}
+                {/* Search bar untuk mobile */}
                 {isSearchVisible && (
                     <div
                         className={`absolute top-16 left-0 w-full px-4 py-2 transition-transform duration-1000 ease-in-out ${
