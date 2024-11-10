@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import { Hexagon, Circle, PencilLine, Square } from 'lucide-react';
+import { Hexagon, Circle, PencilLine, MapPin } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import MenuComponent from './MenuComponent';
 import 'leaflet/dist/leaflet.css';
@@ -13,18 +13,11 @@ const MapComponent = () => {
     const [polylinePoints, setPolylinePoints] = useState([]);
     const [rectangleBounds, setRectangleBounds] = useState(null);
     const [circleData, setCircleData] = useState(null);
-    const [missions, setMissions] = useState([]);
+    const [markerPosition, setMarkerPosition] = useState({ lat: '', lng: '' });
+    const [showPopover, setShowPopover] = useState(false);
+    const [isClickMode, setIsClickMode] = useState(false);
 
     useEffect(() => {
-        // Back-end
-        fetch("http://localhost:5001/api/missions")
-        .then((response) => response.json())
-        .then((data) => {
-            setMissions(data);
-            console.log(data);
-        })
-        .catch((error) => console.error("Error", error));
-
         if (mapRef.current && !mapInstance.current) {
             // Initialize the map
             mapInstance.current = L.map(mapRef.current).setView(
@@ -68,6 +61,12 @@ const MapComponent = () => {
         }
     }, []);
 
+    // Toggle popover visibility
+    const togglePopover = () => {
+        setShowPopover((prev) => !prev);
+        setIsClickMode(false); // Reset mode saat popover dibuka/tutup
+    };
+
     // Fungsi untuk memulai mode menggambar poligon
     const handleDrawPolygon = () => {
         if (mapInstance.current) {
@@ -94,17 +93,20 @@ const MapComponent = () => {
         drawLine.enable();
     };
 
-    // Fungsi untuk menggambar persegi panjang
-    const handleDrawRectangle = () => {
-        const drawRectangle = new L.Draw.Rectangle(mapInstance.current, {
-            shapeOptions: {
-                color: 'green',
-                weight: 2,
-                fillColor: '#66ff66',
-                fillOpacity: 0.4,
-            }
-        });
-        drawRectangle.enable();
+    // Fungsi untuk menambahkan marker pada koordinat yang diinputkan
+    const handleAddMarker = () => {
+        const { lat, lng } = markerPosition;
+        if (mapInstance.current && lat && lng) {
+            const marker = L.marker([parseFloat(lat), parseFloat(lng)]).addTo(mapInstance.current);
+            marker.bindPopup(`Marker at [${lat}, ${lng}]`).openPopup();
+            setShowPopover(false); // Tutup popover setelah menambahkan marker
+        }
+    };
+
+    // Fungsi untuk mengupdate koordinat marker berdasarkan input
+    const handleMarkerPositionChange = (e) => {
+        const { name, value } = e.target;
+        setMarkerPosition((prev) => ({ ...prev, [name]: value }));
     };
 
     // Fungsi untuk menggambar lingkaran
@@ -119,7 +121,6 @@ const MapComponent = () => {
         });
         drawCircle.enable();
     };
-
 
     return (
         <div className='relative flex items-center'>
@@ -142,10 +143,37 @@ const MapComponent = () => {
                     <button onClick={handleDrawLine} className="border-2 border-white px-2 py-2 bg-blue-950 text-white rounded-xl">
                         <PencilLine />
                     </button>
+
                     {/* Tombol Kustom untuk Memulai Mode Gambar */}
-                    <button onClick={handleDrawRectangle} className="border-2 border-white px-2 py-2 bg-blue-950 text-white rounded-xl">
-                        <Square />
+                    <button onClick={togglePopover} className="border-2 border-white px-2 py-2 bg-blue-950 text-white rounded-xl">
+                        <MapPin />
                     </button>
+                    {/* Popover untuk input koordinat */}
+                    {showPopover && (
+                        <div className="absolute left-16 p-4 bg-white bg-opacity-70 border rounded-lg shadow-lg w-48 z-20">
+                            <h3 className="text-sm font-semibold mb-2">Set Marker Position</h3>
+                            <input
+                                type="text"
+                                name="lat"
+                                placeholder="Latitude"
+                                value={markerPosition.lat}
+                                onChange={handleMarkerPositionChange}
+                                className="border-2 border-blue-950 px-2 py-1 mb-2 w-full rounded"
+                            />
+                            <input
+                                type="text"
+                                name="lng"
+                                placeholder="Longitude"
+                                value={markerPosition.lng}
+                                onChange={handleMarkerPositionChange}
+                                className="border-2 border-blue-950 px-2 py-1 mb-2 w-full rounded"
+                            />
+                            <button onClick={handleAddMarker} className="w-full border-2 border-blue-950 px-2 py-1 bg-blue-500 text-white rounded">
+                                Add Marker
+                            </button>
+                        </div>
+                    )}
+                    
                     {/* Tombol Kustom untuk Memulai Mode Gambar */}
                     <button onClick={handleDrawCircle} className="border-2 border-white px-2 py-2 bg-blue-950 text-white rounded-xl">
                         <Circle />
