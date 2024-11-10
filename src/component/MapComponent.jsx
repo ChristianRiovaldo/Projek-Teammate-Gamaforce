@@ -13,8 +13,19 @@ const MapComponent = () => {
     const [polylinePoints, setPolylinePoints] = useState([]);
     const [rectangleBounds, setRectangleBounds] = useState(null);
     const [circleData, setCircleData] = useState(null);
-
+    const [missions, setMissions] = useState([])
+    
+    
     useEffect(() => {
+        // Back-end
+        fetch("http://localhost:5001/api/missions")
+        .then((response) => response.json())
+        .then((data) => {
+            setMissions(data);
+            console.log(data);
+        })
+        .catch((error) => console.error("Error", error));
+
         if (mapRef.current && !mapInstance.current) {
             // Initialize the map
             mapInstance.current = L.map(mapRef.current).setView(
