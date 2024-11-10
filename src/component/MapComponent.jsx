@@ -19,6 +19,27 @@ const MapComponent = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
 
+    // Fungsi untuk menyimpan data ke backend
+    const saveShape = async (shapeData) => {
+        try {
+            const response = await fetch('http://localhost:3000/api/shapes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(shapeData)
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to save shape');
+            }
+            const savedShape = await response.json();
+            console.log('Shape saved:', savedShape);
+        } catch (error) {
+            console.error('Error saving shape:', error);
+        }
+    };
+
     useEffect(() => {
         if (mapRef.current && !mapInstance.current) {
             // Initialize the map
@@ -39,24 +60,28 @@ const MapComponent = () => {
             mapInstance.current.on(L.Draw.Event.CREATED, (event) => {
                 const layer = event.layer;
                 drawnItems.current.addLayer(layer);
+                let shapeData;
 
                 if (event.layerType === 'polygon') {
                     const points = layer.getLatLngs()[0].map((point) => [point.lat, point.lng]);
+                    shapeData = { type: event.layerType, coordinates: points };
                     setPolygonPoints(points);
                 } else if (event.layerType === 'polyline') {
                     const points = layer.getLatLngs().map((point) => [point.lat, point.lng]);
+                    shapeData = { type: event.layerType, coordinates: points };
                     setPolylinePoints(points);
-                } else if (event.layerType === 'rectangle') {
-                    const bounds = layer.getBounds();
-                    setRectangleBounds({
-                        southwest: [bounds.getSouthWest().lat, bounds.getSouthWest().lng],
-                        northeast: [bounds.getNorthEast().lat, bounds.getNorthEast().lng],
-                    });
                 } else if (event.layerType === 'circle') {
                     const center = layer.getLatLng();
                     const radius = layer.getRadius();
+                    shapeData = { type: event.layerType, center: [center.lat, center.lng], radius };
                     setCircleData({ center: [center.lat, center.lng], radius });
+                } else if (event.layerType === 'marker') {
+                    const position = layer.getLatLng();
+                    shapeData = { type: event.layerType, position: [position.lat, position.lng] };
                 }
+
+                // Menyimpan data shapeData
+                saveShape(shapeData);
 
                 // Tambahkan layer ke peta
                 layer.addTo(mapInstance.current);

@@ -4,8 +4,7 @@
   "type": "commonjs",
   "main": "src/app.js",
   "scripts": {
-    "start": "node src/app.js",
-    "dev": "nodemon src/app.js"
+    "server": "nodemon src/app.js"
   },
   "keywords": [],
   "author": "",
