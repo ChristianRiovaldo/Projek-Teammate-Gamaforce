@@ -13,9 +13,8 @@ const MapComponent = () => {
     const [polylinePoints, setPolylinePoints] = useState([]);
     const [rectangleBounds, setRectangleBounds] = useState(null);
     const [circleData, setCircleData] = useState(null);
-    const [missions, setMissions] = useState([])
-    
-    
+    const [missions, setMissions] = useState([]);
+
     useEffect(() => {
         // Back-end
         fetch("http://localhost:5001/api/missions")
