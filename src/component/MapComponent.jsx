@@ -1,6 +1,6 @@
 import L from 'leaflet';
 import { Hexagon, Circle, PencilLine, MapPin, Edit, Trash2 } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import MenuComponent from './MenuComponent';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
@@ -18,8 +18,10 @@ const MapComponent = () => {
     const drawnItems = useRef(new L.FeatureGroup());
     const [isEditing, setIsEditing] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [createdShapes, setCreatedShapes] = useState([]);
+    const [createdMission, setCreatedMission] = useState(null); // State untuk nama misi yang dibuat
 
-    // Fungsi untuk menyimpan data ke backend
+    // Fungsi untuk menyimpan data
     const saveShape = async (shapeData) => {
         try {
             const response = await fetch('http://localhost:3000/api/shapes', {
@@ -39,6 +41,36 @@ const MapComponent = () => {
             console.error('Error saving shape:', error);
         }
     };
+
+    const onCreateMission = (missionName) => {
+        if (!missionName) {
+            alert("Silakan masukkan nama misi");
+            return;
+        }
+        setCreatedMission(missionName);
+        handleSaveShapes(missionName);
+        console.log("Misi Dibuat:", missionName);
+    }
+
+    // Fungsi mengirim data ke backend
+    const handleSaveShapes = async (missionName) => {
+        if(missionName.trim()) {
+            try {
+                for (const shape of createdShapes) {
+                    const shapeData = { ...shape, missionName };
+                    await saveShape(shapeData);
+                }
+                setCreatedShapes([]); // Kosongkan state setelah data disimpan
+                alert('All shapes have been saved successfully!');
+            } catch (error) {
+                console.error('Error saving shapes:', error);
+                alert('Failed to save some shapes. Please try again.');
+            }
+        }
+        else {
+            alert("Please enter a valid mission name.");
+        }
+    };    
 
     useEffect(() => {
         if (mapRef.current && !mapInstance.current) {
@@ -80,8 +112,8 @@ const MapComponent = () => {
                     shapeData = { type: event.layerType, position: [position.lat, position.lng] };
                 }
 
-                // Menyimpan data shapeData
-                saveShape(shapeData);
+                // Tambahkan data shapeData ke state createdShapes
+                setCreatedShapes((prevShapes) => [...prevShapes, shapeData]);
 
                 // Tambahkan layer ke peta
                 layer.addTo(mapInstance.current);
@@ -187,7 +219,8 @@ const MapComponent = () => {
         <div className='relative flex items-center'>
             {/* Create Mission Button */}
             <div className='absolute w-full h-screen bg-transparent'>
-                    <MenuComponent/>
+                    <MenuComponent onCreateMission={onCreateMission}/>
+                    <div>{createdMission && <p>Misi Dibuat: {createdMission}</p>}</div>
             </div>
             
             {/* Container untuk peta */}
@@ -196,10 +229,12 @@ const MapComponent = () => {
 
             <div className='absolute left-0 top-52 lg:top-48 flex items-start z-10'>
                 <div className="flex flex-col items-start gap-2 px-2 max-w-96 sm:max-w-md lg:max-w-lg">
+                    
                     {/* Tombol Kustom untuk Memulai Mode Gambar */}
                     <button onClick={handleDrawPolygon} className="border-2 border-white px-2 py-2 bg-blue-950 text-white rounded-xl">
                         <Hexagon />
                     </button>
+
                     {/* Tombol Kustom untuk Memulai Mode Gambar */}
                     <button onClick={handleDrawLine} className="border-2 border-white px-2 py-2 bg-blue-950 text-white rounded-xl">
                         <PencilLine />
@@ -209,6 +244,7 @@ const MapComponent = () => {
                     <button onClick={togglePopover} className="border-2 border-white px-2 py-2 bg-blue-950 text-white rounded-xl">
                         <MapPin />
                     </button>
+
                     {/* Popover untuk input koordinat */}
                     {showPopover && (
                         <div className="absolute left-16 p-4 bg-white bg-opacity-70 border rounded-lg shadow-lg w-48 z-20">
