@@ -21,6 +21,19 @@ const db = new sqlite3.Database(dbPath, (err) => {
                 console.log('Shapes table created or already exists.');
             }
         });
+
+        // Tambahkan kolom 'name' jika belum ada
+        db.run(`ALTER TABLE shapes ADD COLUMN name TEXT`, (err) => {
+            if (err) {
+                if (err.message.includes('duplicate column name')) {
+                    console.log('Column "name" already exists.');
+                } else {
+                    console.error('Error adding column "name":', err.message);
+                }
+            } else {
+                console.log('Column "name" added successfully.');
+            }
+        });
     }
 });
 
