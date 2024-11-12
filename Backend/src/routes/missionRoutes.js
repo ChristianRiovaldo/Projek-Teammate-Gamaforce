@@ -3,7 +3,7 @@ const router = express.Router();
 const MissionController = require('../controllers/missionControllers');
 
 // Endpoint untuk menerima data dari saveShape
-router.post('/shapes', MissionController.saveShapeData);
+router.post('/shapes', MissionController.saveShapeData);;
 // router.delete('/shapes/:id', saveShapeData);
 
 // router.get('/', MissionController.getAllMissions);

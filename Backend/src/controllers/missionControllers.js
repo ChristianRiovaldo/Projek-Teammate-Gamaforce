@@ -13,7 +13,6 @@ class MissionController {
             }
         });
     };
-
 }
 
 

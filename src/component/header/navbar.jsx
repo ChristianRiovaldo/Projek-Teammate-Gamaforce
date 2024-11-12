@@ -21,7 +21,7 @@ const Header = () => {
                         className="h-10 w-auto"
                     />
                 </div>
-                
+
                 {/* Search bar untuk layar besar */}
                 <div className="hidden sm:flex w-full max-w-sm items-center space-x-2">
                     <input
