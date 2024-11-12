@@ -41,17 +41,7 @@ const MapComponent = () => {
             console.error('Error saving shape:', error);
         }
     };
-
-    const onCreateMission = (missionName) => {
-        if (!missionName) {
-            alert("Silakan masukkan nama misi");
-            return;
-        }
-        setCreatedMission(missionName);
-        handleSaveShapes(missionName);
-        console.log("Misi Dibuat:", missionName);
-    }
-
+    
     // Fungsi mengirim data ke backend
     const handleSaveShapes = async (missionName) => {
         if(missionName.trim()) {
@@ -70,9 +60,35 @@ const MapComponent = () => {
         else {
             alert("Please enter a valid mission name.");
         }
-    };    
+    };
+
+    const onCreateMission = (missionName) => {
+        if (!missionName) {
+            alert("Silakan masukkan nama misi");
+            return;
+        }
+        setCreatedMission(missionName);
+        console.log("Misi Dibuat:", missionName);
+    };
 
     useEffect(() => {
+        if (createdMission) {
+            handleSaveShapes(createdMission);
+        }
+    }, [createdMission]);
+
+    useEffect(() => {
+        if (mapInstance.current) {
+            const drawControl = new L.Control.Draw({
+                draw: {
+                    marker: true, // Pastikan marker diaktifkan
+                },
+                edit: {
+                    featureGroup: drawnItems.current,
+                },
+            });
+        }
+        
         if (mapRef.current && !mapInstance.current) {
             // Initialize the map
             mapInstance.current = L.map(mapRef.current).setView(
@@ -96,20 +112,42 @@ const MapComponent = () => {
 
                 if (event.layerType === 'polygon') {
                     const points = layer.getLatLngs()[0].map((point) => [point.lat, point.lng]);
-                    shapeData = { type: event.layerType, coordinates: points };
+                    shapeData = { 
+                        name: createdMission, 
+                        type: event.layerType,
+                        coordinates: points 
+                    };
                     setPolygonPoints(points);
-                } else if (event.layerType === 'polyline') {
+                } 
+                else if (event.layerType === 'polyline') {
                     const points = layer.getLatLngs().map((point) => [point.lat, point.lng]);
-                    shapeData = { type: event.layerType, coordinates: points };
+                    shapeData = { 
+                        name: createdMission,
+                        type: event.layerType,
+                        coordinates: points 
+                    };
                     setPolylinePoints(points);
-                } else if (event.layerType === 'circle') {
+                } 
+                else if (event.layerType === 'circle') {
                     const center = layer.getLatLng();
                     const radius = layer.getRadius();
-                    shapeData = { type: event.layerType, center: [center.lat, center.lng], radius };
+                    shapeData = { 
+                        name: createdMission,
+                        type: event.layerType,
+                        center: [center.lat, center.lng], 
+                        radius 
+                    };
                     setCircleData({ center: [center.lat, center.lng], radius });
-                } else if (event.layerType === 'marker') {
+                } 
+                else if (event.layerType === 'marker') {
                     const position = layer.getLatLng();
-                    shapeData = { type: event.layerType, position: [position.lat, position.lng] };
+                    shapeData = { 
+                        name: createdMission,
+                        type: 'marker',
+                        coordinates: [position.lat, position.lng] 
+                    };
+                    console.log('Marker detected:', shapeData); // Debug log
+                    setMarkerPosition(position);
                 }
 
                 // Tambahkan data shapeData ke state createdShapes
@@ -217,6 +255,7 @@ const MapComponent = () => {
 
     return (
         <div className='relative flex items-center'>
+
             {/* Create Mission Button */}
             <div className='absolute w-full h-screen bg-transparent'>
                     <MenuComponent onCreateMission={onCreateMission}/>
