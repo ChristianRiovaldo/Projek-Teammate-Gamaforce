@@ -1,10 +1,20 @@
 import React, { useState } from "react";
 
-const MenuComponent = () => {
+const MenuComponent = ({ onCreateMission}) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [missionName, setMissionName] = useState(""); // State untuk nama misi
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
+    };
+
+    const handleCreateMission = () => {
+        if (missionName.trim()) {
+            onCreateMission(missionName); // Panggil function dari MapComponent untuk menyimpan shape
+            setIsMenuOpen(false); // Menutup menu setelah create
+        } else {
+            alert("Please enter a mission name.");
+        }
     };
 
     return (
@@ -26,9 +36,13 @@ const MenuComponent = () => {
                                 type="text"
                                 placeholder="Nama misi..."
                                 className="border-2 border-blue-950 rounded-md w-full"
+                                value={missionName}
+                                onChange={(e) => setMissionName(e.target.value)} // Update nama misi
                             />
-                            <button className="bg-blue-950 text-white rounded-lg px-4 py-2 w-full sm:w-auto">
-                                Create
+                            <button
+                                className="bg-blue-950 text-white rounded-lg px-4 py-2 w-full sm:w-auto"
+                                onClick={handleCreateMission}
+                                >Create
                             </button>
                         </div>
                         <button
