@@ -2,7 +2,7 @@ const db = require('../config/missionDatabase');
 
 const Mission = {
     save: (shapeData, callback) => {
-        const { name, type, coordinates, center, radius } = shapeData;
+        const { missionName, type, coordinates, center, radius } = shapeData;
 
         // Konversi koordinat dan pusat ke format JSON string untuk disimpan di database
         const coordString = coordinates ? JSON.stringify(coordinates) : null;
@@ -11,7 +11,7 @@ const Mission = {
         // SQL query untuk menyimpan data shape ke dalam tabel shapes
         db.run(
             `INSERT INTO shapes (name, type, coordinates, center, radius) VALUES (?, ?, ?, ?, ?)`,
-            [name, type, coordString, centerString, radius],
+            [missionName, type, coordString, centerString, radius],
             function (err) {
                 callback(err, this.lastID); // Callback untuk mengembalikan hasil penyimpanan
             }
