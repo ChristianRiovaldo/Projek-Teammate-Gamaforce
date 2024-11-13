@@ -13,8 +13,18 @@ class MissionController {
             }
         });
     };
-}
 
+    static async getAllMissions(req, res) {
+        Shape.getAllMissions((err, rows) => {
+            if (err) {
+                console.error('Error fetching missions:', err.message);
+                res.status(500).json({ error: 'Failed to fetch missions' });
+            } else {
+                res.status(200).json(rows);
+            }
+        });
+    }
+}
 
 module.exports = MissionController;
 

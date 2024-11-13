@@ -17,7 +17,14 @@ const Mission = {
             }
         );
     },
-};
+
+    getAllMissions: (callback) => {
+        const sql = 'SELECT name FROM shapes'; // Query untuk mengambil semua nama misi
+        db.all(sql, [], (err, rows) => {
+            callback(err, rows); // Mengirimkan hasil query ke callback
+        });
+    }
+}
 
 module.exports = Mission;
 
