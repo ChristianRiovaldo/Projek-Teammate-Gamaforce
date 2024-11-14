@@ -1,8 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const MenuComponent = ({ onCreateMission}) => {
+const MenuComponent = ({ onCreateMission }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [missionName, setMissionName] = useState(""); // State untuk nama misi
+    const [missions, setMissions] = useState([]); // State untuk daftar misi
+
+    // Mengambil daftar misi dari backend
+    useEffect(() => {
+        const fetchMissions = async () => {
+            try {
+                const response = await fetch("http://localhost:3000/api/shapes");
+                const data = await response.json();
+                setMissions([...new Set(data.map((shape) => shape.name))]); // Mengupdate state missions dengan data dari backend
+            } catch (error) {
+                console.error("Error fetching missions:", error);
+            }
+        };
+
+        fetchMissions();
+    }, []);
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -11,6 +27,7 @@ const MenuComponent = ({ onCreateMission}) => {
     const handleCreateMission = () => {
         if (missionName.trim()) {
             onCreateMission(missionName); // Panggil function dari MapComponent untuk menyimpan shape
+            setMissionName(""); // Reset input
             setIsMenuOpen(false); // Menutup menu setelah create
         } else {
             alert("Please enter a mission name.");
@@ -42,7 +59,7 @@ const MenuComponent = ({ onCreateMission}) => {
                             <button
                                 className="bg-blue-950 text-white rounded-lg px-4 py-2 w-full sm:w-auto"
                                 onClick={handleCreateMission}
-                                >Create
+                            >Create
                             </button>
                         </div>
                         <button
@@ -53,12 +70,21 @@ const MenuComponent = ({ onCreateMission}) => {
                         </button>
                     </div>
 
-                    {/* Konten Tambahan */}
+                    {/* Konten Menampilkan Misi */}
                     <div className="bg-white bg-opacity-80 border-2 border-red-800  text-black rounded-lg shadow-lg p-4 w-full max-w-60 h-36 sm:w-72 sm:h-full">
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur adipisicing
-                            elit. Aliquid nisi aperiam velit
-                        </p>
+                        <h3 className="font-bold text-lg">Mission List</h3>
+                        
+                            {/* Menampilkan daftar misi yang diambil dari backend */}
+                            {missions.length > 0 ? (
+                                <ol className="list-decimal pl-10 space-y-1 max-h-32 overflow-y-auto text-sm text-left">
+                                    {missions.map((name, index) => (
+                                        <li key={index}>{name}</li>
+                                    ))}
+                                </ol>
+                            ) : (
+                                <p>No missions created yet.</p>
+                            )}
+                        
                     </div>
                 </div>
             )}
