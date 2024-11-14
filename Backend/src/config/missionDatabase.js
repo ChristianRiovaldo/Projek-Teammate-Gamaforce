@@ -17,7 +17,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
         console.log('Connected to SQLite database.');
         db.run(`CREATE TABLE IF NOT EXISTS shapes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT
+            name TEXT,
             type TEXT,
             coordinates TEXT,
             center TEXT,

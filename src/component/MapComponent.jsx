@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import { Hexagon, Circle, PencilLine, MapPin, Edit, Trash2 } from 'lucide-react';
+import { Hexagon, Circle, PencilLine, MapPin, Edit } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import MenuComponent from './MenuComponent';
 import 'leaflet/dist/leaflet.css';
@@ -17,9 +17,9 @@ const MapComponent = () => {
     const [showPopover, setShowPopover] = useState(false);
     const drawnItems = useRef(new L.FeatureGroup());
     const [isEditing, setIsEditing] = useState(false);
-    const [isDeleting, setIsDeleting] = useState(false);
     const [createdShapes, setCreatedShapes] = useState([]);
     const [createdMission, setCreatedMission] = useState(null); // State untuk nama misi yang dibuat
+    const [missionList, setMissionList] = useState([]);
 
     // Fungsi untuk menyimpan data
     const saveShape = async (shapeData) => {
@@ -64,19 +64,19 @@ const MapComponent = () => {
 
     const onCreateMission = (missionName) => {
         if (!missionName) {
-            alert("Silakan masukkan nama misi");
+            alert("Please enter a mission name");
             return;
         }
         setCreatedMission(missionName);
         handleSaveShapes(missionName);
-        console.log("Misi Dibuat:", missionName);
-    }
 
-    useEffect(() => {
-        if (createdMission) {
-            handleSaveShapes(createdMission);
-        }
-    }, [createdMission]);
+        // Add the mission to the mission list
+        setMissionList((prevList) => {
+            const updatedList = [...prevList, missionName];
+            return updatedList;
+        });
+        console.log("Mission Created:", missionName);
+    }
 
     useEffect(() => {
         if (mapInstance.current) {
@@ -237,23 +237,6 @@ const MapComponent = () => {
         }
     };
 
-    // Toggle delete mode
-    const handleDeleteMode = () => {
-        setIsDeleting(!isDeleting);
-        setIsEditing(false);
-        if (isDeleting) {
-            drawnItems.current.eachLayer((layer) => {
-                layer.on('click', () => {
-                    drawnItems.current.removeLayer(layer);
-                });
-            });
-        } else {
-            drawnItems.current.eachLayer((layer) => {
-                layer.off('click'); // Disable delete event listener
-            });
-        }
-    };
-
     return (
         <div className='relative flex items-center'>
 
@@ -319,11 +302,6 @@ const MapComponent = () => {
                     {/* Button untuk editing */}
                     <button onClick={handleEditMode} className={`border-2 px-2 py-2 ${isEditing ? 'bg-green-500' : 'bg-blue-950'} text-white rounded-xl`}>
                         <Edit />
-                    </button>
-
-                    {/* Button untuk menghapus */}
-                    <button onClick={handleDeleteMode} className={`border-2 px-2 py-2 ${isDeleting ? 'bg-red-500' : 'bg-blue-950'} text-white rounded-xl`}>
-                        <Trash2 />
                     </button>
 
                     {/* Jika ingin Menampilkan atau menyimpan misi */}

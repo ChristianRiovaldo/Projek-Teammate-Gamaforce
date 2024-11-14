@@ -76,11 +76,11 @@ const MenuComponent = ({ onCreateMission }) => {
                         
                             {/* Menampilkan daftar misi yang diambil dari backend */}
                             {missions.length > 0 ? (
-                                <ol className="list-decimal pl-10 space-y-1 max-h-32 overflow-y-auto text-sm text-left">
+                                <ul className="list-decimal pl-8 space-y-1 max-h-32 overflow-y-auto text-sm text-left">
                                     {missions.map((name, index) => (
                                         <li key={index}>{name}</li>
                                     ))}
-                                </ol>
+                                </ul>
                             ) : (
                                 <p>No missions created yet.</p>
                             )}
