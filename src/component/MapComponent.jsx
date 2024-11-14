@@ -114,7 +114,7 @@ const MapComponent = () => {
                 if (event.layerType === 'polygon') {
                     const points = layer.getLatLngs()[0].map((point) => [point.lat, point.lng]);
                     shapeData = { 
-                        name: createdMission, 
+                        missionName: createdMission, 
                         type: event.layerType,
                         coordinates: points 
                     };
@@ -123,7 +123,7 @@ const MapComponent = () => {
                 else if (event.layerType === 'polyline') {
                     const points = layer.getLatLngs().map((point) => [point.lat, point.lng]);
                     shapeData = { 
-                        name: createdMission,
+                        missionName: createdMission,
                         type: event.layerType,
                         coordinates: points 
                     };
@@ -133,7 +133,7 @@ const MapComponent = () => {
                     const center = layer.getLatLng();
                     const radius = layer.getRadius();
                     shapeData = { 
-                        name: createdMission,
+                        missionName: createdMission,
                         type: event.layerType,
                         center: [center.lat, center.lng], 
                         radius 
@@ -143,7 +143,7 @@ const MapComponent = () => {
                 else if (event.layerType === 'marker') {
                     const position = layer.getLatLng();
                     shapeData = { 
-                        name: createdMission,
+                        missionName: createdMission,
                         type: 'marker',
                         coordinates: [position.lat, position.lng] 
                     };
