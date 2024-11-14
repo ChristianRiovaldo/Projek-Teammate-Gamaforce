@@ -223,7 +223,6 @@ const MapComponent = () => {
     // Toggle edit mode
     const handleEditMode = () => {
         setIsEditing(!isEditing);
-        setIsDeleting(false);
         if (isEditing) {
             mapInstance.current.eachLayer((layer) => {
                 if (drawnItems.current.hasLayer(layer) && layer.editing) {

@@ -13,7 +13,7 @@ const Mission = {
             `INSERT INTO shapes (name, type, coordinates, center, radius) VALUES (?, ?, ?, ?, ?)`,
             [missionName, type, coordString, centerString, radius],
             function (err) {
-                callback(err, this.lastID); // Callback untuk mengembalikan hasil penyimpanan
+                callback(err, this.lastID);
             }
         );
     },
@@ -21,9 +21,21 @@ const Mission = {
     getAllMissions: (callback) => {
         const sql = 'SELECT name FROM shapes'; // Query untuk mengambil semua nama misi
         db.all(sql, [], (err, rows) => {
-            callback(err, rows); // Mengirimkan hasil query ke callback
+            callback(err, rows);
+        });
+    },
+
+    deleteMissionByName: (name, callback) => {
+        const sql = 'DELETE FROM shapes WHERE name = ?'; // Query SQL untuk menghapus berdasarkan nama
+        db.run(sql, [name], function (err) {
+            if (err) {
+                callback(err, null); // Mengirimkan error ke callback jika terjadi kesalahan
+            } else {
+                callback(null, this.changes); // Mengirimkan jumlah baris yang dihapus
+            }
         });
     }
+    
 }
 
 module.exports = Mission;
