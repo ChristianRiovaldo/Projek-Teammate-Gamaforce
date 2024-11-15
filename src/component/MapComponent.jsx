@@ -238,7 +238,7 @@ const MapComponent = () => {
 
     return (
         <div className='relative flex items-center'>
-
+            
             {/* Create Mission Button */}
             <div className='absolute w-full h-screen bg-transparent'>
                     <MenuComponent onCreateMission={onCreateMission}/>
