@@ -103,28 +103,18 @@ const MenuComponent = ({ onCreateMission }) => {
                     {/* Konten Menampilkan Misi */}
                     <div className="bg-white bg-opacity-80 border-2 border-red-800  text-black rounded-lg shadow-lg p-4 w-full max-w-60 h-36 sm:w-72 sm:h-full">
                         <h3 className="font-bold text-lg">Mission List</h3>
-
-                        {/* Menampilkan daftar misi yang diambil dari backend */}
-                        {missions.length > 0 ? (
-                            <ul className="pl-2 font-semibold rounded-sm space-y-1 max-h-40 pt-2 overflow-y-auto text-sm text-left">
-                                {missions.map((name, index) => (
-                                    <li 
-                                        key={index} 
-                                        className="flex justify-between items-center pl-1" 
-                                    > {name}
-                                        <button
-                                            className="text-red-600 hover:text-red-800 pr-2"
-                                            onClick={() => handleDeleteMission(name)}
-                                        >
-                                            <i className="fas fa-trash bg-red-600 hover:bg-red-800 border-2 border-red-600 hover:border-red-800 p-1 rounded-md text-white scale-90"></i>
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p>No missions created yet.</p>
-                        )}
-
+                        
+                            {/* Menampilkan daftar misi yang diambil dari backend */}
+                            {missions.length > 0 ? (
+                                <ul className="list-decimal pl-8 space-y-1 max-h-32 overflow-y-auto text-sm text-left">
+                                    {missions.map((name, index) => (
+                                        <li key={index}>{name}</li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p>No missions created yet.</p>
+                            )}
+                        
                     </div>
                 </div>
             )}
