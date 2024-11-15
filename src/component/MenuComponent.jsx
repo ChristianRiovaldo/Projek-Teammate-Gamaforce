@@ -1,3 +1,4 @@
+import { Radius } from "lucide-react";
 import React, { useState, useEffect } from "react";
 
 const MenuComponent = ({ onCreateMission }) => {
@@ -61,29 +62,36 @@ const MenuComponent = ({ onCreateMission }) => {
         <div>
             <button
                 onClick={toggleMenu}
-                className="absolute bg-red-600 text-white rounded-xl shadow-md w-auto px-4 py-2 z-50 top-[85%] left-[30%] sm:left-[40%] md:left-[40%] lg:left-[45%]"
+                className="absolute bg-red-600 hover:bg-red-800 text-white rounded-xl shadow-md w-auto px-4 py-2 z-50 top-[85%] left-[30%] sm:left-[40%] md:left-[40%] lg:left-[45%]"
             >
-                Create Mission
+                Mission Menu
             </button>
 
             {isMenuOpen && (
-                <div className="absolute flex flex-col sm:flex-row top-[25%] left-[25%] sm:left-[20%] md:left-[25%] lg:top-[27%] lg:left-[35%] h-1/3 z-50 gap-2">
+                <div className="absolute flex flex-col sm:flex-row top-[25%] left-[25%] sm:left-[20%] md:left-[25%] lg:top-[27%] lg:left-[35%] h-60 z-50 gap-2">
                     {/* Menu Create Mission */}
-                    <div className="bg-white bg-opacity-80 border-2 border-red-800  flex flex-col justify-evenly text-black rounded-lg shadow-lg p-4 w-full max-w-60 sm:w-72 sm:h-full gap-2">
+                    <div className="bg-white bg-opacity-80 border-2 border-red-800 flex flex-col justify-between text-black rounded-lg shadow-lg p-4 px-6 w-full max-w-60 sm:w-72 sm:h-full gap-2">
                         <h3 className="font-bold text-lg">Mission Options</h3>
-                        <div className="flex flex-col gap-2 sm:flex-row">
+                        <div className="flex flex-col gap-2 mt-[-20px]">
                             <input
                                 type="text"
                                 placeholder="Nama misi..."
-                                className="border-2 border-blue-950 rounded-md w-full"
+                                className="border-2 border-blue-950 rounded-md w-full px-2"
                                 value={missionName}
                                 onChange={(e) => setMissionName(e.target.value)} // Update nama misi
                             />
-                            <button
-                                className="bg-blue-950 text-white rounded-lg px-4 py-2 w-full sm:w-auto"
-                                onClick={handleCreateMission}
-                            >Create
-                            </button>
+                            <div className="flex flex-row gap-2">
+                                <button
+                                    className="bg-blue-950 hover:bg-blue-700 text-white rounded-lg px-4 py-2 w-full sm:w-full"
+                                    onClick={handleCreateMission}
+                                >Create
+                                </button>
+                                <button
+                                    className="bg-green-700 hover:bg-green-600 text-white rounded-lg px-4 py-2 w-full sm:w-full"
+                                    onClick={handleCreateMission}
+                                >Save
+                                </button>
+                            </div>
                         </div>
                         <button
                             onClick={toggleMenu}
@@ -98,19 +106,21 @@ const MenuComponent = ({ onCreateMission }) => {
 
                         {/* Menampilkan daftar misi yang diambil dari backend */}
                         {missions.length > 0 ? (
-                            <ol className="pl-2 font-semibold border-2 border-blue-950 rounded-sm space-y-1 max-h-32 overflow-y-auto text-sm text-left">
+                            <ul className="pl-2 font-semibold rounded-sm space-y-1 max-h-40 pt-2 overflow-y-auto text-sm text-left">
                                 {missions.map((name, index) => (
-                                    <li key={index} className="flex justify-between items-center">
-                                        {index + 1}. {name}
+                                    <li 
+                                        key={index} 
+                                        className="flex justify-between items-center pl-1" 
+                                    > {name}
                                         <button
                                             className="text-red-600 hover:text-red-800 pr-2"
                                             onClick={() => handleDeleteMission(name)}
                                         >
-                                            <i className="fas fa-trash"></i>
+                                            <i className="fas fa-trash bg-red-600 hover:bg-red-800 border-2 border-red-600 hover:border-red-800 p-1 rounded-md text-white scale-90"></i>
                                         </button>
                                     </li>
                                 ))}
-                            </ol>
+                            </ul>
                         ) : (
                             <p>No missions created yet.</p>
                         )}
