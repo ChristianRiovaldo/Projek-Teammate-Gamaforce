@@ -72,7 +72,7 @@ const MenuComponent = ({ onCreateMission }) => {
                     {/* Menu Create Mission */}
                     <div className="bg-white bg-opacity-80 border-2 border-red-800 flex flex-col justify-between text-black rounded-lg shadow-lg p-4 px-6 w-full max-w-60 sm:w-72 sm:h-full gap-2">
                         <h3 className="font-bold text-lg">Mission Options</h3>
-                        <div className="flex flex-col gap-2 mt-[-20px]">
+                        <div className="flex flex-col gap-2 mt-[-5px] sm:mt-[-20px]">
                             <input
                                 type="text"
                                 placeholder="Nama misi..."
@@ -101,22 +101,22 @@ const MenuComponent = ({ onCreateMission }) => {
                     </div>
 
                     {/* Konten Menampilkan Misi */}
-                    <div className="bg-white bg-opacity-80 border-2 border-red-800  text-black rounded-lg shadow-lg p-4 w-full max-w-60 h-36 sm:w-72 sm:h-full">
+                    <div className="bg-white bg-opacity-80 border-2 border-red-800  text-black rounded-lg shadow-lg p-4 w-full max-w-60 h-2/3 sm:w-72 sm:h-full">
                         <h3 className="font-bold text-lg">Mission List</h3>
                         
                             {/* Menampilkan daftar misi yang diambil dari backend */}
                             {missions.length > 0 ? (
-                                <ul className="list-decimal p-2 space-y-1 max-h-40 overflow-y-auto text-sm text-left">
+                                <ul className="list-decimal p-2 space-y-1 max-h-16 sm:max-h-40 overflow-y-auto text-sm text-left mb-2">
                                     {missions.map((name, index) => (
-                                        <li key={index} className="flex justify-between items-center font-semibold pb-1">
+                                        <li key={index} className="flex justify-between items-center font-semibold pb-2">
                                             {name}
                                             <button
                                                 className=""
                                                 onClick={() => handleDeleteMission(name)}
                                             >
-                                                <i className="fas fa-trash text-white bg-red-600 hover:bg-red-800 rounded-md p-1"></i>
+                                                <i className="fas fa-trash text-white bg-red-600 hover:bg-red-800 rounded-md p-1 w-6 text-xs"></i>
                                             </button>
-                                        </li>
+                                        </li> 
                                     ))}
                                 </ul>
                             ) : (
