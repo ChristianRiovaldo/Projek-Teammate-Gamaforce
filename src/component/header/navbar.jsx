@@ -41,7 +41,7 @@ const Header = ({ onSearch }) => {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
-                    <button className="bg-blue-950 text-white rounded-md px-4 py-1" onClick={handleSearch}>
+                    <button className="bg-blue-950 text-white rounded-md px-4 py-1 hover:bg-blue-700">
                         Cari
                     </button>
                 </div>
@@ -57,7 +57,7 @@ const Header = ({ onSearch }) => {
                 {/* Search bar untuk mobile */}
                 {isSearchVisible && (
                     <div
-                        className={`absolute top-16 left-0 w-full px-4 py-2 transition-transform duration-1000 ease-in-out ${
+                        className={`absolute flex flex-row gap-2 top-16 left-0 w-full px-4 py-2 transition-transform duration-1000 ease-in-out ${
                             isSearchVisible ? "translate-y-0" : "-translate-y-full"
                         }`}
                         style={{ transformOrigin: "top" }}
@@ -69,6 +69,9 @@ const Header = ({ onSearch }) => {
                             className="w-full text-black border-2 border-blue-950 rounded-lg px-4 py-1 focus:outline-none"
                             placeholder="Cari..."
                         />
+                        <button className="bg-blue-950 text-white rounded-md px-4 py-1 hover:bg-blue-700">
+                            Cari
+                        </button>
                     </div>
                 )}
             </div>
