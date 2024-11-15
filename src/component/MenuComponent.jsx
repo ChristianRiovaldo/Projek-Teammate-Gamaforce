@@ -106,9 +106,17 @@ const MenuComponent = ({ onCreateMission }) => {
                         
                             {/* Menampilkan daftar misi yang diambil dari backend */}
                             {missions.length > 0 ? (
-                                <ul className="list-decimal pl-8 space-y-1 max-h-32 overflow-y-auto text-sm text-left">
+                                <ul className="list-decimal p-2 space-y-1 max-h-40 overflow-y-auto text-sm text-left">
                                     {missions.map((name, index) => (
-                                        <li key={index}>{name}</li>
+                                        <li key={index} className="flex justify-between items-center font-semibold pb-1">
+                                            {name}
+                                            <button
+                                                className=""
+                                                onClick={() => handleDeleteMission(name)}
+                                            >
+                                                <i className="fas fa-trash text-white bg-red-600 hover:bg-red-800 rounded-md p-1"></i>
+                                            </button>
+                                        </li>
                                     ))}
                                 </ul>
                             ) : (
