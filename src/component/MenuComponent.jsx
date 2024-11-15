@@ -34,6 +34,29 @@ const MenuComponent = ({ onCreateMission }) => {
         }
     };
 
+    // Fungsi untuk menghapus misi
+    const handleDeleteMission = async (missionToDelete) => {
+        const confirmDelete = window.confirm(`Are you sure you want to delete the mission "${missionToDelete}"?`);
+        if (!confirmDelete) return;
+
+        try {
+            const response = await fetch(`http://localhost:3000/api/shapes/${missionToDelete}`, {
+                method: "DELETE",
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to delete mission");
+            }
+
+            // Hapus misi dari daftar state missions
+            setMissions((prevMissions) => prevMissions.filter((name) => name !== missionToDelete));
+            alert(`Mission "${missionToDelete}" deleted successfully.`);
+        } catch (error) {
+            console.error("Error deleting mission:", error);
+            alert("Failed to delete mission. Please try again.");
+        }
+    };
+
     return (
         <div>
             <button
@@ -65,26 +88,33 @@ const MenuComponent = ({ onCreateMission }) => {
                         <button
                             onClick={toggleMenu}
                             className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md"
-                        >
-                            Close
+                        >Close
                         </button>
                     </div>
 
                     {/* Konten Menampilkan Misi */}
                     <div className="bg-white bg-opacity-80 border-2 border-red-800  text-black rounded-lg shadow-lg p-4 w-full max-w-60 h-36 sm:w-72 sm:h-full">
                         <h3 className="font-bold text-lg">Mission List</h3>
-                        
-                            {/* Menampilkan daftar misi yang diambil dari backend */}
-                            {missions.length > 0 ? (
-                                <ul className="list-decimal pl-8 space-y-1 max-h-32 overflow-y-auto text-sm text-left">
-                                    {missions.map((name, index) => (
-                                        <li key={index}>{name}</li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <p>No missions created yet.</p>
-                            )}
-                        
+
+                        {/* Menampilkan daftar misi yang diambil dari backend */}
+                        {missions.length > 0 ? (
+                            <ol className="pl-2 font-semibold border-2 border-blue-950 rounded-sm space-y-1 max-h-32 overflow-y-auto text-sm text-left">
+                                {missions.map((name, index) => (
+                                    <li key={index} className="flex justify-between items-center">
+                                        {index + 1}. {name}
+                                        <button
+                                            className="text-red-600 hover:text-red-800 pr-2"
+                                            onClick={() => handleDeleteMission(name)}
+                                        >
+                                            <i className="fas fa-trash"></i>
+                                        </button>
+                                    </li>
+                                ))}
+                            </ol>
+                        ) : (
+                            <p>No missions created yet.</p>
+                        )}
+
                     </div>
                 </div>
             )}

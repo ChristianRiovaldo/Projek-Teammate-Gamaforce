@@ -24,6 +24,26 @@ class MissionController {
             }
         });
     }
+
+    static async deleteMission(req, res) {
+        const { name } = req.params;    
+        try {
+            Shape.deleteMissionByName(name, (err, result) => {
+                if (err) {
+                    console.error('Error deleting mission:', err.message);
+                    res.status(500).json({ error: 'Failed to delete mission' });
+                } else if (result.affectedRows === 0) {
+                    res.status(404).json({ message: 'Mission not found' });
+                } else {
+                    res.status(200).json({ message: 'Mission deleted successfully' });
+                }
+            });
+        } catch (error) {
+            console.error('Unexpected error deleting mission:', error.message);
+            res.status(500).json({ error: 'Unexpected server error' });
+        }
+    }
+    
 }
 
 module.exports = MissionController;
