@@ -1,7 +1,7 @@
 import { Radius } from "lucide-react";
 import React, { useState, useEffect } from "react";
 
-const MenuComponent = ({ onCreateMission, onSaveEdits, onEditMission }) => {
+const MenuComponent = ({ onCreateMission, onLoadMission }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [missionName, setMissionName] = useState(""); // State untuk nama misi
     const [missions, setMissions] = useState([]); // State untuk daftar misi
@@ -59,22 +59,17 @@ const MenuComponent = ({ onCreateMission, onSaveEdits, onEditMission }) => {
     };
 
     const handleEditMission = async (missionName) => {
-        console.log("Editing mission:", missionName);
-        
         try {
-            const response = await fetch(`http://localhost:3000/api/shapes/${missionName}`, {
-                method: "GET",
-            });
-
+            const response = await fetch(`http://localhost:3000/api/shapes/${missionName}`);
             if (!response.ok) {
-                throw new Error("Failed to fetch shapes for the mission.");
+                throw new Error('Failed to fetch mission data');
             }
 
-            const shapeData = await response.json();
-            onEditMission(shapeData.shapes);
+            const missionData = await response.json(); // Data dari server untuk misi tertentu
+            onLoadMission(missionData); // Panggil fungsi untuk meneruskan data ke MapComponent
         } catch (error) {
-            console.error("Error fetching shapes for mission:", error);
-            alert("Failed to load shapes for the selected mission.");
+            console.error('Error loading mission:', error);
+            alert('Failed to load mission data. Please try again.');
         }
     };
 
@@ -108,7 +103,7 @@ const MenuComponent = ({ onCreateMission, onSaveEdits, onEditMission }) => {
                                 </button>
                                 <button
                                     className="bg-green-700 hover:bg-green-600 text-white rounded-lg px-4 py-2 w-full sm:w-full"
-                                    onClick={onSaveEdits}
+                                    
                                 >Save
                                 </button>
                             </div>

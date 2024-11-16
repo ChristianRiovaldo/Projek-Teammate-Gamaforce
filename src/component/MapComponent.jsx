@@ -21,8 +21,6 @@ const MapComponent = forwardRef((props, ref) => {
     const [createdMission, setCreatedMission] = useState(null); // State untuk nama misi yang dibuat
     const [missionList, setMissionList] = useState([]);
     const [missionShapes, setMissionShapes] = useState([]);
-
-    // Add this state to manage the current mission
     const [currentMission, setCurrentMission] = useState(null);
 
     // Modify the loadMissionShapes function to update the current mission
@@ -221,20 +219,61 @@ const MapComponent = forwardRef((props, ref) => {
             return updatedList;
         });
         console.log("Mission Created:", missionName);
-    };            
-
-    const handleSaveEditedShapes = async () => {
+    };
+    
+    const fetchMissionList = async () => {
         try {
-            drawnItems.current.eachLayer(async (layer) => {
-                if (layer.edited) {
-                    const shapeData = {}; // Masukkan data layer yang diedit
-                    await saveShape(shapeData);
-                }
-            });
-            alert('All edits have been saved successfully!');
+            const response = await fetch('http://localhost:3000/api/shapes');
+            if (!response.ok) {
+                throw new Error('Failed to fetch missions');
+            }
+            const missions = await response.json();
+            setMissionList(missions); // Simpan daftar misi di state
         } catch (error) {
-            console.error('Error saving edits:', error);
+            console.error('Error fetching mission list:', error);
         }
+    };
+    
+    // Panggil fungsi saat komponen dimuat
+    useEffect(() => {
+        fetchMissionList();
+    }, []);
+
+    const handleLoadMission = (missionData) => {
+        // Reset peta sebelum menggambar ulang
+        mapInstance.current.eachLayer((layer) => {
+            if (!(layer instanceof L.TileLayer)) {
+                mapInstance.current.removeLayer(layer);
+            }
+        });
+    
+        // Iterasi melalui data bentuk dari misi
+        missionData.forEach((shape) => {
+            let layer;
+    
+            if (shape.type === 'polygon') {
+                layer = L.polygon(shape.coordinates, { color: 'blue' });
+            } else if (shape.type === 'polyline') {
+                layer = L.polyline(shape.coordinates, { color: 'black' });
+            } else if (shape.type === 'circle') {
+                const [lat, lng] = shape.center;
+                layer = L.circle([lat, lng], {
+                    radius: shape.radius,
+                    color: 'red',
+                    fillOpacity: 0.4,
+                });
+            } else if (shape.type === 'marker') {
+                const [lat, lng] = shape.coordinates;
+                layer = L.marker([lat, lng]);
+            }
+    
+            if (layer) {
+                layer.addTo(mapInstance.current); // Tambahkan layer ke peta
+                drawnItems.current.addLayer(layer); // Tambahkan layer ke group
+            }
+        });
+    
+        console.log('Mission loaded:', missionData);
     };
 
     useEffect(() => {
@@ -393,76 +432,7 @@ const MapComponent = forwardRef((props, ref) => {
                 if (layer.editing) layer.editing.enable();
             });
         }
-    };
-
-    const onEditingMission = async (name) => {
-        console.log("Mission name received in onEditMission:", name);
-        if (!name) {
-            alert("Please enter a mission name");
-            return;
-        }
-    
-        // Bersihkan peta terlebih dahulu
-        drawnItems.current.clearLayers();
-    
-        try {
-            const response = await fetch(`http://localhost:3000/api/shapes/${name}`, {
-                method: "GET",
-            });
-
-            if (!response.ok) {
-                throw new Error("Failed to fetch shapes for the mission.");
-            }
-
-            const shapeData = await response.json();
-            // onEditingMission(shapeData.shapes);
-            // Cek apakah shapes untuk missionName sudah ada
-            if (missionShapes[name]) {
-                // Iterasi semua shapes yang terdaftar untuk missionName
-                missionShapes[name].forEach((shape) => {
-                    let layer;
-    
-                    // Tentukan jenis shape dan buat layer yang sesuai
-                    if (shape.type === "polygon") {
-                        layer = L.polygon(shape.coordinates, { color: "green" }).addTo(mapInstance.current); // Polygon
-                    } else if (shape.type === "polyline") {
-                        layer = L.polyline(shape.coordinates, { color: "blue" }).addTo(mapInstance.current); // Polyline
-                    } else if (shape.type === "circle") {
-                        const [lat, lng] = shape.center;
-                        layer = L.circle([lat, lng], {
-                            radius: shape.radius,
-                            color: "red",
-                        }).addTo(mapInstance.current); // Circle
-                    } else if (shape.type === "marker") {
-                        const [lat, lng] = shape.coordinates;
-                        layer = L.marker([lat, lng]).addTo(mapInstance.current); // Marker
-                    }
-    
-                    // Jika layer berhasil dibuat, tambahkan ke feature group untuk editing
-                    if (layer) {
-                        drawnItems.current.addLayer(layer);
-                    }
-                });
-    
-                // // Set state untuk shapes misi yang telah dimuat
-                // setMissionShapes((prevShapes) => {
-                //     const updatedShapes = { ...prevShapes };
-                //     if (!updatedShapes[missionName]) {
-                //         updatedShapes[missionName] = [];
-                //     }
-                //     updatedShapes[missionName] = missionShapes[missionName]; // Pastikan shapes di state diupdate
-                //     return updatedShapes;
-                // });
-    
-                alert(`Mission "${missionName}" shapes loaded successfully!`);
-            } else {
-                alert("No shapes found for this mission.");
-            }
-        } catch (error) {
-            console.error("Error loading mission shapes:", error);
-            alert("An error occurred while loading shapes. Please try again.");
-        }
-    };    
+    }; 
 
     return (
         <div className='relative flex items-center'>
@@ -471,7 +441,7 @@ const MapComponent = forwardRef((props, ref) => {
             <div className='absolute w-full h-screen bg-transparent'>
                     <MenuComponent 
                         onCreateMission={onCreateMission}
-                        onEditMission={onEditingMission}
+                        onLoadMission={(data) => handleLoadMission(data)}
                         />
                     <div>{createdMission && <p>Misi Dibuat: {createdMission}</p>}</div>
             </div>

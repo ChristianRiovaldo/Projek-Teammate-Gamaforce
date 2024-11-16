@@ -55,12 +55,20 @@ const Mission = {
     //     );
     // },
 
-    getShapesByMissionName: (name, callback) => {
-        const sql = 'SELECT * FROM shapes WHERE name = ?'; // Mengambil semua kolom dari tabel shapes
-        db.all(sql, [name], (err, rows) => {
-            callback(err, rows); // Mengembalikan hasil query ke callback
+    getShapesByMissionName: (name) => {
+        const sql = 'SELECT * FROM shapes WHERE name = ?';
+        return new Promise((resolve, reject) => {
+            db.all(sql, [name], (err, rows) => {
+                if (err) return reject(err);
+                const parsedRows = rows.map(row => ({
+                    ...row,
+                    coordinates: row.coordinates ? JSON.parse(row.coordinates) : null,
+                    center: row.center ? JSON.parse(row.center) : null,
+                }));
+                resolve(parsedRows);
+            });
         });
-    },
+    } 
     
 }
 
