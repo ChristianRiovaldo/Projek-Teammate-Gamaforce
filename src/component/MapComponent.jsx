@@ -9,7 +9,6 @@ import 'leaflet-draw';
 const MapComponent = forwardRef((props, ref) => {
     const mapRef = useRef(null);
     const mapInstance = useRef(null);
-    const [isSatelliteView, setIsSatelliteView] = useState(false);
     const [polygonPoints, setPolygonPoints] = useState([]);
     const [polylinePoints, setPolylinePoints] = useState([]);
     const [rectangleBounds, setRectangleBounds] = useState(null);
@@ -23,6 +22,7 @@ const MapComponent = forwardRef((props, ref) => {
     const [missionList, setMissionList] = useState([]);
     const [missionShapes, setMissionShapes] = useState([]);
     const [currentMission, setCurrentMission] = useState(null);
+    const [isSatelliteView, setIsSatelliteView] = useState(false);
 
     // Modify the loadMissionShapes function to update the current mission
     const loadMissionShapes = async (missionName) => {
@@ -542,23 +542,6 @@ const MapComponent = forwardRef((props, ref) => {
                         <Edit />
                     </button>
 
-                    {/* Jika ingin Menampilkan atau menyimpan misi */}
-                    {/* <div className="border-2 border-blue-950 bg-white p-4 rounded-md max-h-36 overflow-y-auto max-w-34">
-                        <h3>Selected Polygon:</h3>
-                        <pre>{JSON.stringify(polygonPoints, null, 2)}</pre>
-                    </div>
-                    <div className="border-2 border-blue-950 bg-white p-4 rounded-md max-h-36 overflow-y-auto max-w-34">
-                        <h3>Selected Polyline:</h3>
-                        <pre>{JSON.stringify(polylinePoints, null, 2)}</pre>
-                    </div>
-                    <div className="border-2 border-blue-950 bg-white p-4 rounded-md max-h-36 overflow-y-auto max-w-34">
-                        <h3>Selected Circle:</h3>
-                        <pre>{JSON.stringify(circleData, null, 2)}</pre>
-                    </div>
-                    <div className="border-2 border-blue-950 bg-white p-4 rounded-md max-h-36 overflow-y-auto max-w-34">
-                        <h3>Selected Rectangle:</h3>
-                        <pre>{JSON.stringify(rectangleBounds, null, 2)}</pre>
-                    </div> */}
                 </div>
             </div>
         </div>

@@ -5,6 +5,7 @@ const MenuComponent = ({ onCreateMission, onLoadMission }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [missionName, setMissionName] = useState(""); // State untuk nama misi
     const [missions, setMissions] = useState([]); // State untuk daftar misi
+    const [selectedMission, setSelectedMission] = useState(null); // State untuk misi yang sedang diedit
 
     // Mengambil daftar misi dari backend
     useEffect(() => {
@@ -59,6 +60,8 @@ const MenuComponent = ({ onCreateMission, onLoadMission }) => {
     };
 
     const handleEditMission = async (missionName) => {
+        setSelectedMission(missionName);
+        setMissionName(missionName);
         try {
             const response = await fetch(`http://localhost:3000/api/shapes/${missionName}`);
             if (!response.ok) {
@@ -103,7 +106,7 @@ const MenuComponent = ({ onCreateMission, onLoadMission }) => {
                                 </button>
                                 <button
                                     className="bg-green-700 hover:bg-green-600 text-white rounded-lg px-4 py-2 w-full sm:w-full"
-                                    
+                                    onClick={handleCreateMission}
                                 >Save
                                 </button>
                             </div>

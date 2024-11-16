@@ -36,25 +36,6 @@ const Mission = {
         });
     },
 
-    // updateMissionById: (id, updatedData, callback) => {
-    //     const { missionName, type, coordinates, center, radius } = updatedData;
-    //     const coordString = coordinates ? JSON.stringify(coordinates) : null;
-    //     const centerString = center ? JSON.stringify(center) : null;
-    //     const sql = `
-    //         UPDATE shapes 
-    //         SET name = ?, type = ?, coordinates = ?, center = ?, radius = ?
-    //         WHERE id = ?
-    //     `;
-    
-    //     db.run(
-    //         sql,
-    //         [missionName, type, coordString, centerString, radius, id],
-    //         function (err) {
-    //             callback(err, this.changes); // Mengirim jumlah baris yang diperbarui
-    //         }
-    //     );
-    // },
-
     getShapesByMissionName: (name) => {
         const sql = 'SELECT * FROM shapes WHERE name = ?';
         return new Promise((resolve, reject) => {
@@ -69,7 +50,7 @@ const Mission = {
             });
         });
     } 
-    
+
 }
 
 module.exports = Mission;
