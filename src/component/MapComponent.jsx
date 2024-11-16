@@ -20,6 +20,7 @@ const MapComponent = () => {
     const [createdShapes, setCreatedShapes] = useState([]);
     const [createdMission, setCreatedMission] = useState(null); // State untuk nama misi yang dibuat
     const [missionList, setMissionList] = useState([]);
+    const [missionShapes, setMissionShapes] = useState([]);
 
     // Fungsi untuk menyimpan data
     const saveShape = async (shapeData) => {
@@ -37,6 +38,15 @@ const MapComponent = () => {
             }
             const savedShape = await response.json();
             console.log('Shape saved:', savedShape);
+
+            setMissionShapes((prevShapes) => {
+                const updatedShapes = { ...prevShapes };
+                if (!updatedShapes[shapeData.missionName]) {
+                    updatedShapes[shapeData.missionName] = [];
+                }
+                updatedShapes[shapeData.missionName].push(shapeData);
+                return updatedShapes;
+            });
         } catch (error) {
             console.error('Error saving shape:', error);
         }
@@ -76,7 +86,21 @@ const MapComponent = () => {
             return updatedList;
         });
         console.log("Mission Created:", missionName);
-    }
+    };            
+
+    const handleSaveEditedShapes = async () => {
+        try {
+            drawnItems.current.eachLayer(async (layer) => {
+                if (layer.edited) {
+                    const shapeData = {}; // Masukkan data layer yang diedit
+                    await saveShape(shapeData);
+                }
+            });
+            alert('All edits have been saved successfully!');
+        } catch (error) {
+            console.error('Error saving edits:', error);
+        }
+    };
 
     useEffect(() => {
         if (mapInstance.current) {
@@ -236,12 +260,84 @@ const MapComponent = () => {
         }
     };
 
+    const onEditingMission = async (name) => {
+        console.log("Mission name received in onEditMission:", name);
+        if (!name) {
+            alert("Please enter a mission name");
+            return;
+        }
+    
+        // Bersihkan peta terlebih dahulu
+        drawnItems.current.clearLayers();
+    
+        try {
+            const response = await fetch(`http://localhost:3000/api/shapes/${name}`, {
+                method: "GET",
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch shapes for the mission.");
+            }
+
+            const shapeData = await response.json();
+            // onEditingMission(shapeData.shapes);
+            // Cek apakah shapes untuk missionName sudah ada
+            if (missionShapes[name]) {
+                // Iterasi semua shapes yang terdaftar untuk missionName
+                missionShapes[name].forEach((shape) => {
+                    let layer;
+    
+                    // Tentukan jenis shape dan buat layer yang sesuai
+                    if (shape.type === "polygon") {
+                        layer = L.polygon(shape.coordinates, { color: "green" }).addTo(mapInstance.current); // Polygon
+                    } else if (shape.type === "polyline") {
+                        layer = L.polyline(shape.coordinates, { color: "blue" }).addTo(mapInstance.current); // Polyline
+                    } else if (shape.type === "circle") {
+                        const [lat, lng] = shape.center;
+                        layer = L.circle([lat, lng], {
+                            radius: shape.radius,
+                            color: "red",
+                        }).addTo(mapInstance.current); // Circle
+                    } else if (shape.type === "marker") {
+                        const [lat, lng] = shape.coordinates;
+                        layer = L.marker([lat, lng]).addTo(mapInstance.current); // Marker
+                    }
+    
+                    // Jika layer berhasil dibuat, tambahkan ke feature group untuk editing
+                    if (layer) {
+                        drawnItems.current.addLayer(layer);
+                    }
+                });
+    
+                // // Set state untuk shapes misi yang telah dimuat
+                // setMissionShapes((prevShapes) => {
+                //     const updatedShapes = { ...prevShapes };
+                //     if (!updatedShapes[missionName]) {
+                //         updatedShapes[missionName] = [];
+                //     }
+                //     updatedShapes[missionName] = missionShapes[missionName]; // Pastikan shapes di state diupdate
+                //     return updatedShapes;
+                // });
+    
+                alert(`Mission "${missionName}" shapes loaded successfully!`);
+            } else {
+                alert("No shapes found for this mission.");
+            }
+        } catch (error) {
+            console.error("Error loading mission shapes:", error);
+            alert("An error occurred while loading shapes. Please try again.");
+        }
+    };    
+
     return (
         <div className='relative flex items-center'>
             
             {/* Create Mission Button */}
             <div className='absolute w-full h-screen bg-transparent'>
-                    <MenuComponent onCreateMission={onCreateMission}/>
+                    <MenuComponent 
+                        onCreateMission={onCreateMission}
+                        onEditMission={onEditingMission}
+                        />
                     <div>{createdMission && <p>Misi Dibuat: {createdMission}</p>}</div>
             </div>
             
