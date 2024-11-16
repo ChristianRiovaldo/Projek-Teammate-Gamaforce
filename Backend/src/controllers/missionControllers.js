@@ -23,7 +23,7 @@ class MissionController {
                 res.status(200).json(rows);
             }
         });
-    }
+    };
 
     static async deleteMission(req, res) {
         const { name } = req.params;    
@@ -42,7 +42,50 @@ class MissionController {
             console.error('Unexpected error deleting mission:', error.message);
             res.status(500).json({ error: 'Unexpected server error' });
         }
-    }
+    };
+
+    static async getMissionShapesByName(req, res) {
+        const { name } = req.params; // Ambil nama misi dari parameter URL
+        
+        try {
+            Shape.getShapesByMissionName(name, (err, rows) => {
+                if (err) {
+                    console.error("Database error:", err);
+                    return res.status(500).json({ error: 'Internal Server Error' });
+                }
+        
+                if (rows.length === 0) {
+                    return res.status(404).json({ message: 'No shapes found for this mission.' });
+                }
+        
+                res.json(rows);
+            });
+        } catch (error) {
+            console.error('Unexpected error get mission:', error.message);
+            res.status(500).json({ error: 'Unexpected server error' });
+        }
+    };
+
+    // static async updateMission(req, res) {
+    //     const { id } = req.params; // ID atau nama misi yang akan diperbarui
+    //     const updatedData = req.body; // Data baru yang akan diperbarui
+    
+    //     try {
+    //         Shape.updateMissionById(id, updatedData, (err, result) => {
+    //             if (err) {
+    //                 console.error('Error updating mission:', err.message);
+    //                 res.status(500).json({ error: 'Failed to update mission' });
+    //             } else if (result.affectedRows === 0) {
+    //                 res.status(404).json({ message: 'Mission not found' });
+    //             } else {
+    //                 res.status(200).json({ message: 'Mission updated successfully' });
+    //             }
+    //         });
+    //     } catch (error) {
+    //         console.error('Unexpected error updating mission:', error.message);
+    //         res.status(500).json({ error: 'Unexpected server error' });
+    //     }
+    // };    
     
 }
 

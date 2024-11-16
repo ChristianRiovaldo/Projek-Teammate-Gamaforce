@@ -2,11 +2,21 @@ import React from "react";
 import { useState } from "react";
 import { Search } from 'lucide-react';
 
-const Header = () => {
+const Header = ({ onSearch }) => {
     const [isSearchVisible, setIsSearchVisible] = useState(false);
-    
+    const [searchQuery, setSearchQuery] = useState("");
+
     const toggleSearch = () => {
         setIsSearchVisible(!isSearchVisible);
+    };
+
+    const handleSearch = () => {
+        if (!searchQuery.trim()) {
+            alert("Please enter a mission name.");
+            return;
+        }
+        onSearch(searchQuery);
+        setSearchQuery("");
     };
 
     return (
@@ -28,6 +38,8 @@ const Header = () => {
                         type="search"
                         placeholder="Cari..."
                         className="w-full text-black border-2 border-blue-950 rounded-lg px-4 py-1 focus:outline-none"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                     />
                     <button className="bg-blue-950 text-white rounded-md px-4 py-1 hover:bg-blue-700">
                         Cari
