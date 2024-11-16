@@ -60,16 +60,17 @@ const Header = ({ onSearchMission }) => {
                 {isSearchVisible && (
                     <form onSubmit={handleSearch}>
                         <div
-                            className={`absolute flex flex-row gap-2 top-16 left-0 w-full px-4 py-2 transition-transform duration-1000 ease-in-out ${
+                            className={`absolute flex flex-row gap-2 top-16 left-0 w-full px-4 py-2 ${
                                 isSearchVisible ? "translate-y-0" : "-translate-y-full"
                             }`}
-                            style={{ transformOrigin: "top" }}
                         >
                             <input
                                 type="search"
                                 name="cari"
                                 id="CariMobile"
                                 className="w-full text-black border-2 border-blue-950 rounded-lg px-4 py-1 focus:outline-none"
+                                value={missionName}
+                                onChange={(e) => setMissionName(e.target.value)}
                                 placeholder="Cari..."
                             />
                             <button onClick={() => loadMissionShapes(selectedMissionName)} className="bg-blue-950 text-white rounded-md px-4 py-1 hover:bg-blue-700">

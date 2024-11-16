@@ -9,6 +9,7 @@ import 'leaflet-draw';
 const MapComponent = forwardRef((props, ref) => {
     const mapRef = useRef(null);
     const mapInstance = useRef(null);
+    const [isSatelliteView, setIsSatelliteView] = useState(false);
     const [polygonPoints, setPolygonPoints] = useState([]);
     const [polylinePoints, setPolylinePoints] = useState([]);
     const [rectangleBounds, setRectangleBounds] = useState(null);
@@ -363,6 +364,37 @@ const MapComponent = forwardRef((props, ref) => {
         setShowPopover((prev) => !prev);
     };
 
+    // Fungsi untuk toggle mode peta ke satelit
+    const toggleSatelliteView = () => {
+        if (!mapInstance.current) return;
+
+        const map = mapInstance.current;
+
+        // Hapus semua layer tile sebelumnya
+        map.eachLayer((layer) => {
+            if (layer instanceof L.TileLayer) {
+                map.removeLayer(layer);
+            }
+        });
+
+        if (!isSatelliteView) {
+            // Tambahkan Esri World Imagery untuk satelit view
+            L.tileLayer(
+                'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', 
+                {
+                    attribution: 'Tiles © Esri — Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
+                }
+            ).addTo(map);
+        } else {
+            // Kembalikan ke peta default
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            }).addTo(map);
+        }
+
+        setIsSatelliteView(!isSatelliteView); // Toggle state
+    }
+
     // Fungsi untuk memulai mode menggambar poligon
     const handleDrawPolygon = () => {
         if (mapInstance.current) {
@@ -450,8 +482,14 @@ const MapComponent = forwardRef((props, ref) => {
             <div ref={mapRef} className="w-screen h-screen mt-16 z-0" style={{ width: "100%", height: "calc(100vh - 4rem)" }} />
 
 
-            <div className='absolute left-0 top-52 lg:top-48 flex items-start z-10'>
+            <div className='absolute left-2 top-52 lg:top-48 flex items-start z-10'>
                 <div className="flex flex-col items-start gap-2 px-2 max-w-96 sm:max-w-md lg:max-w-lg">
+                    <button
+                        onClick={toggleSatelliteView}
+                        className="px-4 py-2 bg-blue-950 border-2 border-white text-white rounded-xl shadow-md hover:bg-blue-700"
+                    >
+                        {isSatelliteView ? 'Default View' : 'Satellite View'}
+                    </button>
                     
                     {/* Tombol Kustom untuk Memulai Mode Gambar */}
                     <button onClick={handleDrawPolygon} className="border-2 border-white px-2 py-2 bg-blue-950 text-white rounded-xl">

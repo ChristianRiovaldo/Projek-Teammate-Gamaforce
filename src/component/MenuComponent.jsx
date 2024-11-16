@@ -1,4 +1,4 @@
-import { Radius } from "lucide-react";
+import { UserRoundPen } from 'lucide-react';
 import React, { useState, useEffect } from "react";
 
 const MenuComponent = ({ onCreateMission, onLoadMission }) => {
@@ -77,7 +77,7 @@ const MenuComponent = ({ onCreateMission, onLoadMission }) => {
         <div>
             <button
                 onClick={toggleMenu}
-                className="fixed bg-red-600 hover:bg-red-800 text-white rounded-xl shadow-md w-auto px-4 py-2 z-50 top-[85%] left-[30%] sm:left-[40%] md:left-[40%] lg:left-[45%]"
+                className="fixed bg-red-600 border-2 border-white hover:bg-red-800 text-white rounded-xl shadow-md w-auto px-4 py-2 z-50 top-[85%] left-[30%] sm:left-[40%] md:left-[40%] lg:left-[45%]"
             >
                 Mission Menu
             </button>
@@ -116,30 +116,29 @@ const MenuComponent = ({ onCreateMission, onLoadMission }) => {
                     </div>
 
                     {/* Konten Menampilkan Misi */}
-                    <div className="bg-white bg-opacity-80 border-2 border-red-800  text-black rounded-lg shadow-lg p-4 w-full max-w-60 h-2/3 sm:w-72 sm:h-full">
+                    <div className="flex flex-col justify-center items-center bg-white bg-opacity-80 border-2 border-red-800  text-black rounded-lg shadow-lg p-4 w-full max-w-60 h-2/3 sm:w-72 sm:h-full">
                         <h3 className="font-bold text-lg">Mission List</h3>
 
                         {/* Menampilkan daftar misi yang diambil dari backend */}
                         {missions.length > 0 ? (
-                            <ul className="list-decimal p-2 space-y-1 max-h-16 sm:max-h-40 overflow-y-auto text-sm text-left mb-2">
+                            <ul className="list-decimal p-2 space-y-2 max-h-16 sm:max-h-40 overflow-y-auto text-sm text-left mb-2">
                                 {missions.map((name, index) => (
-                                    <li key={index} className="flex justify-between items-center font-semibold pb-2">
+                                    <li key={index} className="flex flex-row justify-between items-center font-semibold overflow-x-auto pb-2">
                                         {name}
-                                        <button
-                                            className=""
-                                            onClick={() => handleDeleteMission(name)}
-                                        >
-                                            <i className="fas fa-trash text-white bg-red-600 hover:bg-red-800 rounded-md p-1 w-6 text-xs"></i>
-                                        </button>
-                                        <button
-                                            className="bg-blue-950 hover:bg-yellow-800 text-white rounded-md px-2 py-1 text-sm"
-                                            onClick={() => {
-                                                console.log("Mission name on button click:", name);
-                                                handleEditMission(name);
-                                            }}
-                                        >
-                                            Edit
-                                        </button>
+                                        <div className="flex flex-row justify-between">
+                                            <button
+                                                onClick={() => handleDeleteMission(name)}>
+                                                <i className="fas fa-trash text-white bg-red-600 hover:bg-red-800 rounded-md p-1 mx- w-6 text-xs"></i>
+                                            </button>
+                                            <button
+                                                className="bg-lime-600 hover:bg-yellow-800 text-white flex items-center justify-center rounded-md px-1 py-1 mx-1 w-6 h-6 text-xs"
+                                                onClick={() => {
+                                                    console.log("Mission name on button click:", name);
+                                                    handleEditMission(name);
+                                                }}>
+                                                <UserRoundPen className='w-5' />
+                                            </button>
+                                        </div>
                                     </li>
                                 ))}
                             </ul>
