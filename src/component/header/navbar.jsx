@@ -2,21 +2,21 @@ import React from "react";
 import { useState } from "react";
 import { Search } from 'lucide-react';
 
-const Header = ({ onSearch }) => {
+const Header = ({ onSearchMission }) => {
     const [isSearchVisible, setIsSearchVisible] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");
+    const [missionName, setMissionName] = useState('');
 
     const toggleSearch = () => {
         setIsSearchVisible(!isSearchVisible);
     };
 
-    const handleSearch = () => {
-        if (!searchQuery.trim()) {
-            alert("Please enter a mission name.");
-            return;
+    const handleSearch = (e) => {
+        e.preventDefault();
+        if (missionName.trim()) {
+            onSearchMission(missionName);
+        } else {
+            alert('Please enter a mission name');
         }
-        onSearch(searchQuery);
-        setSearchQuery("");
     };
 
     return (
@@ -33,18 +33,20 @@ const Header = ({ onSearch }) => {
                 </div>
 
                 {/* Search bar untuk layar besar */}
-                <div className="hidden sm:flex w-full max-w-sm items-center space-x-2">
-                    <input
-                        type="search"
-                        placeholder="Cari..."
-                        className="w-full text-black border-2 border-blue-950 rounded-lg px-4 py-1 focus:outline-none"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                    <button className="bg-blue-950 text-white rounded-md px-4 py-1 hover:bg-blue-700">
-                        Cari
-                    </button>
-                </div>
+                <form onSubmit={handleSearch}>
+                    <div className="hidden sm:flex w-full max-w-sm items-center space-x-2">
+                        <input
+                            type="search"
+                            placeholder="Cari..."
+                            className="w-full text-black border-2 border-blue-950 rounded-lg px-4 py-1 focus:outline-none"
+                            value={missionName}
+                            onChange={(e) => setMissionName(e.target.value)}
+                        />
+                        <button type="submit" className="bg-blue-950 text-white rounded-md px-4 py-1 hover:bg-blue-700">
+                            Cari
+                        </button>
+                    </div>
+                </form>
 
                 {/* Menu icon untuk layar kecil */}
                 <div className="flex sm:hidden">
@@ -56,23 +58,25 @@ const Header = ({ onSearch }) => {
 
                 {/* Search bar untuk mobile */}
                 {isSearchVisible && (
-                    <div
-                        className={`absolute flex flex-row gap-2 top-16 left-0 w-full px-4 py-2 transition-transform duration-1000 ease-in-out ${
-                            isSearchVisible ? "translate-y-0" : "-translate-y-full"
-                        }`}
-                        style={{ transformOrigin: "top" }}
-                    >
-                        <input
-                            type="search"
-                            name="cari"
-                            id="CariMobile"
-                            className="w-full text-black border-2 border-blue-950 rounded-lg px-4 py-1 focus:outline-none"
-                            placeholder="Cari..."
-                        />
-                        <button className="bg-blue-950 text-white rounded-md px-4 py-1 hover:bg-blue-700">
-                            Cari
-                        </button>
-                    </div>
+                    <form onSubmit={handleSearch}>
+                        <div
+                            className={`absolute flex flex-row gap-2 top-16 left-0 w-full px-4 py-2 transition-transform duration-1000 ease-in-out ${
+                                isSearchVisible ? "translate-y-0" : "-translate-y-full"
+                            }`}
+                            style={{ transformOrigin: "top" }}
+                        >
+                            <input
+                                type="search"
+                                name="cari"
+                                id="CariMobile"
+                                className="w-full text-black border-2 border-blue-950 rounded-lg px-4 py-1 focus:outline-none"
+                                placeholder="Cari..."
+                            />
+                            <button onClick={() => loadMissionShapes(selectedMissionName)} className="bg-blue-950 text-white rounded-md px-4 py-1 hover:bg-blue-700">
+                                Cari
+                            </button>
+                        </div>
+                    </form>
                 )}
             </div>
         </nav>

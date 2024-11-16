@@ -82,7 +82,7 @@ const MenuComponent = ({ onCreateMission, onSaveEdits, onEditMission }) => {
         <div>
             <button
                 onClick={toggleMenu}
-                className="absolute bg-red-600 hover:bg-red-800 text-white rounded-xl shadow-md w-auto px-4 py-2 z-50 top-[85%] left-[30%] sm:left-[40%] md:left-[40%] lg:left-[45%]"
+                className="fixed bg-red-600 hover:bg-red-800 text-white rounded-xl shadow-md w-auto px-4 py-2 z-50 top-[85%] left-[30%] sm:left-[40%] md:left-[40%] lg:left-[45%]"
             >
                 Mission Menu
             </button>

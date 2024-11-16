@@ -1,12 +1,12 @@
 import L from 'leaflet';
 import { Hexagon, Circle, PencilLine, MapPin, Edit } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
 import MenuComponent from './MenuComponent';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 import 'leaflet-draw';
 
-const MapComponent = () => {
+const MapComponent = forwardRef((props, ref) => {
     const mapRef = useRef(null);
     const mapInstance = useRef(null);
     const [polygonPoints, setPolygonPoints] = useState([]);
@@ -21,6 +21,141 @@ const MapComponent = () => {
     const [createdMission, setCreatedMission] = useState(null); // State untuk nama misi yang dibuat
     const [missionList, setMissionList] = useState([]);
     const [missionShapes, setMissionShapes] = useState([]);
+
+    // Add this state to manage the current mission
+    const [currentMission, setCurrentMission] = useState(null);
+
+    // Modify the loadMissionShapes function to update the current mission
+    const loadMissionShapes = async (missionName) => {
+        console.log("loadMissionShapes called with:", missionName);
+        try {
+            const response = await fetch(`http://localhost:3000/api/shapes/${missionName}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch mission data');
+            }
+            const missionData = await response.json();
+            console.log("Received mission data:", JSON.stringify(missionData, null, 2));
+    
+            if (!mapInstance.current) {
+                console.error("Map instance is not initialized");
+                return;
+            }
+    
+            // Clear existing layers
+            mapInstance.current.eachLayer((layer) => {
+                if (!(layer instanceof L.TileLayer)) {
+                    mapInstance.current.removeLayer(layer);
+                }
+            });
+    
+            let allBounds = [];
+    
+            missionData.forEach((shape, index) => {
+                console.log(`Processing shape ${index}:`, JSON.stringify(shape, null, 2));
+                let layer;
+                try {
+                    // Parse coordinates if they're a string
+                    let coordinates = shape.coordinates;
+                    if (typeof coordinates === 'string') {
+                        try {
+                            coordinates = JSON.parse(coordinates);
+                        } catch (parseError) {
+                            console.error(`Error parsing coordinates for shape ${index}:`, parseError);
+                            return;
+                        }
+                    }
+    
+                    // Parse center if it's a string
+                    let center = shape.center;
+                    if (typeof center === 'string') {
+                        try {
+                            center = JSON.parse(center);
+                        } catch (parseError) {
+                            console.error(`Error parsing center for shape ${index}:`, parseError);
+                            return;
+                        }
+                    }
+    
+                    switch (shape.type) {
+                        case 'polygon':
+                            if (coordinates && Array.isArray(coordinates) && coordinates.length >= 3) {
+                                if (coordinates.every(coord => Array.isArray(coord) && coord.length === 2)) {
+                                    layer = L.polygon(coordinates, { color: 'blue' });
+                                } else {
+                                    console.error(`Invalid polygon coordinates for shape ${index}:`, coordinates);
+                                }
+                            } else {
+                                console.error(`Invalid polygon data for shape ${index}:`, shape);
+                            }
+                            break;
+                        case 'polyline':
+                            if (coordinates && Array.isArray(coordinates) && coordinates.length >= 2) {
+                                if (coordinates.every(coord => Array.isArray(coord) && coord.length === 2)) {
+                                    layer = L.polyline(coordinates, { color: 'red' });
+                                } else {
+                                    console.error(`Invalid polyline coordinates for shape ${index}:`, coordinates);
+                                }
+                            } else {
+                                console.error(`Invalid polyline data for shape ${index}:`, shape);
+                            }
+                            break;
+                        case 'circle':
+                            if (center && Array.isArray(center) && center.length === 2 && typeof shape.radius === 'number') {
+                                layer = L.circle(center, { radius: shape.radius, color: 'green' });
+                            } else {
+                                console.error(`Invalid circle data for shape ${index}:`, shape);
+                            }
+                            break;
+                        case 'marker':
+                            if (coordinates && Array.isArray(coordinates) && coordinates.length === 2) {
+                                layer = L.marker(coordinates);
+                            } else {
+                                console.error(`Invalid marker coordinates for shape ${index}:`, coordinates);
+                            }
+                            break;
+                        default:
+                            console.warn(`Unknown shape type for shape ${index}:`, shape.type);
+                            return;
+                    }
+    
+                    if (layer) {
+                        layer.addTo(mapInstance.current);
+                        console.log(`Added ${shape.type} to map`);
+                        if (layer.getBounds) {
+                            allBounds.push(layer.getBounds());
+                        } else if (layer.getLatLng) {
+                            allBounds.push(L.latLngBounds(layer.getLatLng(), layer.getLatLng()));
+                        }
+                    }
+                } catch (shapeError) {
+                    console.error(`Error processing shape ${index}:`, shapeError);
+                }
+            });
+    
+            if (allBounds.length > 0) {
+                const bounds = L.latLngBounds(allBounds);
+                if (bounds.isValid()) {
+                    mapInstance.current.fitBounds(bounds);
+                } else {
+                    console.warn("Invalid bounds, setting default view");
+                    mapInstance.current.setView([0, 0], 2);
+                }
+            } else {
+                console.warn("No valid layers to display");
+                mapInstance.current.setView([0, 0], 2);
+            }
+    
+            setCurrentMission(missionName);
+            console.log(`Mission "${missionName}" loaded successfully!`);
+        } catch (error) {
+            console.error('Error loading mission:', error);
+            alert('Failed to load mission. Please try again.');
+        }
+    };      
+
+    useImperativeHandle(ref, () => ({
+        loadMissionShapes
+    }));
 
     // Fungsi untuk menyimpan data
     const saveShape = async (shapeData) => {
@@ -420,6 +555,6 @@ const MapComponent = () => {
             </div>
         </div>
     );
-};
+});
 
 export default MapComponent;
